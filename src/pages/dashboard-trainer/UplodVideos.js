@@ -37,6 +37,7 @@ class UploadVideos extends Component {
       description: '',
       type: '',
       duration: 0,
+      scheduled: '',
       scheduledTime: '',
       scheduledDate: '',
       rewards: 0,
@@ -126,6 +127,7 @@ class UploadVideos extends Component {
           type: this.state.type,
           image_url: this.state.videoImageUrl,
           duration: this.state.duration,
+          isScheduled: this.state.scheduled === "True",
           scheduledTime: this.state.scheduledTime,
           scheduledDate: this.state.scheduledDate
       };
@@ -232,46 +234,68 @@ class UploadVideos extends Component {
                           </FormGroup>
                         </Col>
                         <Col sm="6">
-                          <FormGroup>
-                            <Label className="control-label">Video Category</Label>
-                            <select
-                                className="form-control select2"
-                                onChange={e => this.setState({type: e.target.value}) }
-                            >
-                              <option>Select</option>
-                              <option value="yoga" >Yoga</option>
-                              <option value="dance">Dance</option>
-                              <option value="rumba">Rumba</option>
-                            </select>
-                          </FormGroup>
                           <Row>
                             <Col sm="6">
-                              <FormGroup className="select2-container">
-                              <Label className="control-label">Date</Label>
-                                 <input
-                                    className="form-control"
-                                    type="date"
-                                    value={this.state.scheduledDate}
-                                    onChange={e => this.setState({scheduledDate: e.target.value}) }
-                                    defaultValue={moment()}
-                                    id="example-date-input"
-                                  />
+                              <FormGroup>
+                                <Label className="control-label">Video Category</Label>
+                                <select
+                                    className="form-control select2"
+                                    onChange={e => this.setState({type: e.target.value}) }
+                                >
+                                  <option>Select</option>
+                                  <option value="yoga" >Yoga</option>
+                                  <option value="dance">Dance</option>
+                                  <option value="rumba">Rumba</option>
+                                </select>
                               </FormGroup>
                             </Col>
+
                             <Col sm="6">
-                            <FormGroup className="select2-container">
-                              <Label className="control-label">Time</Label>
-                              <input
-                                className="form-control"
-                                type="time"
-                                value={this.state.scheduledTime}
-                                onChange={e => this.setState({scheduledTime: e.target.value}) }
-                                defaultValue="13:45:00"
-                                id="example-time-input"
-                              />
-                            </FormGroup>
-                          </Col>
+                              <FormGroup>
+                                <Label className="control-label">Is Scheduled</Label>
+                                <select
+                                    className="form-control select2"
+                                    onChange={e => this.setState({scheduled: e.target.value}) }
+                                >
+                                  <option>Select</option>
+                                  <option value="True" >Is scheduled</option>
+                                  <option value="False">Is Not Scheduled</option>
+                                </select>
+                              </FormGroup>
+                            </Col>
                           </Row>
+
+                           {this.state.scheduled === "True" ?
+                               <Row>
+                                  <Col sm="6">
+                                    <FormGroup className="select2-container">
+                                    <Label className="control-label">Date</Label>
+                                       <input
+                                          className="form-control"
+                                          type="date"
+                                          value={this.state.scheduledDate}
+                                          onChange={e => this.setState({scheduledDate: e.target.value}) }
+                                          defaultValue={moment()}
+                                          id="example-date-input"
+                                        />
+                                    </FormGroup>
+                                  </Col>
+                                  <Col sm="6">
+                                  <FormGroup className="select2-container">
+                                    <Label className="control-label">Time</Label>
+                                    <input
+                                      className="form-control"
+                                      type="time"
+                                      value={this.state.scheduledTime}
+                                      onChange={e => this.setState({scheduledTime: e.target.value}) }
+                                      defaultValue="13:45:00"
+                                      id="example-time-input"
+                                    />
+                                  </FormGroup>
+                                </Col>
+                                </Row>
+                               : ""}
+
                           <FormGroup>
                             <Label htmlFor="productdesc">
                               Video Description
