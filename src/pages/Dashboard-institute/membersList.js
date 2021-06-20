@@ -68,7 +68,6 @@ class MembersList extends Component {
               "email": email,
               "firstname": fName,
               "lastname": lName,
-              "password": "12345",
               "user_type": userType,
               "institution": localStorage.getItem("south_fitness_institution"),
           })

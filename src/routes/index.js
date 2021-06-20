@@ -26,6 +26,8 @@ import UploadVideos from "../pages/dashboard-trainer/UplodVideos";
 import NewBlog from "../pages/dashboard-trainer/NewBlog";
 import TrainerChat from "../pages/dashboard-trainer/TrainerChat";
 import VideoCallDisplay from "../pages/dashboard-trainer/VideoCallDisplay";
+import ActivitiesVideos from "../pages/dashboard-trainer/ActivitiesUpload";
+import ChallengeVideos from "../pages/dashboard-trainer/ChallengeUpload";
 
 const authProtectedRoutes = [
   { path: "/dashboard", component: Dashboard },
@@ -39,13 +41,12 @@ const authProtectedRoutes = [
   { path: "/profile", component: UserProfile },
   { path: "/video-upload", component: UploadVideos },
   { path: "/video-call", component: VideoCallDisplay },
-
-
+  { path: "/activities-upload", component: ActivitiesVideos },
+  { path: "/challenge-upload", component: ChallengeVideos },
 
   //calendar
   { path: "/calendar", component: Calendar },
   { path: "/new-blog", component: NewBlog },
-
 
   // this route should be at the end of all other routes
   { path: "/", exact: true, component: () => <Redirect to="/dashboard" /> },

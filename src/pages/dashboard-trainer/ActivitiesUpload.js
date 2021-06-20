@@ -23,7 +23,7 @@ import axios from "axios";
 import swal from "sweetalert";
 import Loader from "react-loader-spinner";
 
-class UploadVideos extends Component {
+class ActivitiesVideos extends Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -37,12 +37,18 @@ class UploadVideos extends Component {
       description: '',
       type: '',
       duration: 0,
+      duration_ext: '',
       scheduled: '',
       scheduledTime: '',
       scheduledDate: '',
       rewards: 0,
       imageUploading: false,
+      level:'',
+      equip:'',
+      isComplete:false,
+      sets:0
     }
+
   }
 
   imageUpload = async (files) => {
@@ -118,8 +124,8 @@ class UploadVideos extends Component {
   postVideo = async (e) => {
     e.preventDefault();
     this.setState({
-              posting: true
-            });
+      posting: true
+    });
     let objectVideo = {
           uploaded_by: localStorage.getItem("south_fitness_fullname"),
           uploader_id:localStorage.getItem("south_fitness_UID"),
@@ -130,11 +136,14 @@ class UploadVideos extends Component {
           type: this.state.type,
           image_url: this.state.videoImageUrl,
           duration: this.state.duration,
-          isScheduled: true,
-          scheduledTime: this.state.scheduledTime,
-          scheduledDate: this.state.scheduledDate
+          duration_ext: this.state.duration_ext,
+          level:this.state.level,
+          equip:this.state.equip,
+          isComplete:false,
+          sets:this.state.sets
       };
-      await axios.post("https://south-fitness.herokuapp.com/videos/", objectVideo, {
+      console.log("===========================================", objectVideo);
+      await axios.post("https://south-fitness.herokuapp.com/videos/activities/", objectVideo, {
           headers: {
             'Content-Type': 'application/json',
           }
@@ -142,7 +151,8 @@ class UploadVideos extends Component {
         .then(
           response => {
           console.log("=================== > ", response.data);
-          swal("Success!", "Video Posted Success", "success")
+          swal("Success!", "Activity Posted Success", "success")
+
             this.setState({
               posting: false
             });
@@ -150,8 +160,8 @@ class UploadVideos extends Component {
         ).catch(
            response => {
              console.log("================= > The object is : ", response.data);
-             swal("Error!", "Video Posted error", "error");
-             this.setState({
+             swal("Error!", "Activity Posted error", "error");
+            this.setState({
               posting: false
             });
            }
@@ -164,7 +174,7 @@ class UploadVideos extends Component {
         <div className="page-content">
           <Container fluid>
             {/* Render Breadcrumb */}
-            <Breadcrumbs title="Videos" breadcrumbItem="Add Video" />
+            <Breadcrumbs title="Activities" breadcrumbItem="Add Activity" />
 
             <Row>
               <Col xs="12">
@@ -179,7 +189,7 @@ class UploadVideos extends Component {
                       <Row>
                         <Col sm="6">
                           <FormGroup>
-                            <Label htmlFor="productname">Video Title</Label>
+                            <Label htmlFor="productname">Activity Title</Label>
                             <Input
                               id="productname"
                               name="productname"
@@ -191,7 +201,7 @@ class UploadVideos extends Component {
                           </FormGroup>
                           <FormGroup>
                             <Label htmlFor="manufacturername">
-                              Video Instructor
+                              Activity Instructor
                             </Label>
                             <Input
                               id="manufacturername"
@@ -218,26 +228,26 @@ class UploadVideos extends Component {
                           <FormGroup>
                               <Row>
                                   <Col sm="6">
-                                    <Label htmlFor="price">Duration(in minutes)</Label>
+                                    <Label htmlFor="price">Duration</Label>
                                     <Input
-                                  id="price"
-                                  name="price"
-                                  type="number"
-                                  className="form-control"
-                                  value={this.state.duration}
-                                  onChange={e => this.setState({duration: e.target.value}) }
-                                />
+                                      id="price"
+                                      name="price"
+                                      type="number"
+                                      className="form-control"
+                                      value={this.state.duration}
+                                      onChange={e => this.setState({duration: e.target.value}) }
+                                    />
                                   </Col>
                                   <Col sm="6">
-                                    <Label htmlFor="price">Rewards(Points per view)</Label>
-                                    <Input
-                                  id="price"
-                                  name="price"
-                                  type="number"
-                                  className="form-control"
-                                  value={this.state.rewards}
-                                  onChange={e => this.setState({rewards: e.target.value}) }
-                                />
+                                    <Label htmlFor="price">Duration ext</Label>
+                                    <select
+                                        className="form-control select2"
+                                        onChange={e => this.setState({duration_ext: e.target.value}) }>
+                                          <option>Select</option>
+                                          <option value="DAYS" >Days</option>
+                                          <option value="WEEKS">Weeks</option>
+                                          <option value="MONTHS">Months</option>
+                                        </select>
                                   </Col>
                               </Row>
                           </FormGroup>
@@ -246,7 +256,7 @@ class UploadVideos extends Component {
                           <Row>
                             <Col sm="6">
                               <FormGroup>
-                                <Label className="control-label">Video Category</Label>
+                                <Label className="control-label">Activity Category</Label>
                                 <select
                                     className="form-control select2"
                                     onChange={e => this.setState({type: e.target.value}) }
@@ -261,58 +271,62 @@ class UploadVideos extends Component {
 
                             <Col sm="6">
                               <FormGroup>
-                                <Label className="control-label">Is Scheduled</Label>
+                                <Label className="control-label">Equipments Level</Label>
                                 <select
                                     className="form-control select2"
-                                    onChange={e => this.setState({scheduled: e.target.value}) }
+                                    onChange={e => this.setState({equip: e.target.value}) }
                                 >
                                   <option>Select</option>
-                                  <option value="True" >Is scheduled</option>
-                                  <option value="False">Is Not Scheduled</option>
+                                  <option value="BASIC" >BASIC</option>
+                                  <option value="INTERMEDIATE">INTERMEDIATE</option>
+                                  <option value="ADVANCED">ADVANCED</option>
                                 </select>
                               </FormGroup>
                             </Col>
                           </Row>
-                           <Row>
-                              <Col sm="6">
-                                <FormGroup className="select2-container">
-                                <Label className="control-label">Date</Label>
-                                   <input
-                                      className="form-control"
-                                      type="date"
-                                      value={this.state.scheduledDate}
-                                      onChange={e => this.setState({scheduledDate: e.target.value}) }
-                                      defaultValue={moment()}
-                                      id="example-date-input"
-                                    />
-                                </FormGroup>
+                          <Row>
+                                  <Col sm="6">
+                                    <Label htmlFor="price">Fitness Level</Label>
+                                    <select
+                                        className="form-control select2"
+                                        onChange={e => this.setState({level: e.target.value}) }
+                                    >
+                                      <option>Select</option>
+                                      <option value="BASIC" >BASIC</option>
+                                      <option value="INTERMEDIATE">INTERMEDIATE</option>
+                                      <option value="ADVANCED">ADVANCED</option>
+                                    </select>
+                                  </Col>
+                                  <Col sm="6">
+                                    <Label htmlFor="price">Sets Per Workout</Label>
+                                    <Input
+                                  id="price"
+                                  name="price"
+                                  type="number"
+                                  className="form-control"
+                                  value={this.state.sets}
+                                  onChange={e => this.setState({sets: e.target.value}) }
+                                />
+                                  </Col>
+                            </Row>
+                          <Row>
+                              <Col sm="12">
+                                  <FormGroup>
+                                <Label htmlFor="productdesc">
+                                </Label>
+                                <Label htmlFor="productdesc">
+                                  Activity Description
+                                </Label>
+                                <textarea
+                                  className="form-control"
+                                  id="productdesc"
+                                  rows="5"
+                                  value={this.state.description}
+                                  onChange={e => this.setState({description: e.target.value}) }
+                                />
+                              </FormGroup>
                               </Col>
-                              <Col sm="6">
-                                  <FormGroup className="select2-container">
-                                    <Label className="control-label">Time</Label>
-                                    <input
-                                      className="form-control"
-                                      type="time"
-                                      value={this.state.scheduledTime}
-                                      onChange={e => this.setState({scheduledTime: e.target.value}) }
-                                      defaultValue="13:45:00"
-                                      id="example-time-input"
-                                    />
-                                  </FormGroup>
-                                </Col>
-                           </Row>
-                          <FormGroup>
-                            <Label htmlFor="productdesc">
-                              Video Description
-                            </Label>
-                            <textarea
-                              className="form-control"
-                              id="productdesc"
-                              rows="5"
-                              value={this.state.description}
-                              onChange={e => this.setState({description: e.target.value}) }
-                            />
-                          </FormGroup>
+                          </Row>
                         </Col>
                       </Row>
                     </Form>
@@ -323,7 +337,7 @@ class UploadVideos extends Component {
                   <Col sm="6">
                    <Card>
                     <CardBody>
-                      <CardTitle className="mb-3">Video Image</CardTitle>
+                      <CardTitle className="mb-3">Activity Image</CardTitle>
                       <Form>
                       <Dropzone
                         accept={"image/*"}
@@ -492,4 +506,4 @@ class UploadVideos extends Component {
   }
 }
 
-export default UploadVideos
+export default ActivitiesVideos

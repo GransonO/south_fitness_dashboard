@@ -160,6 +160,16 @@ class SidebarContent extends Component {
                       {this.props.t("Upload Video")}
                     </Link>
                   </li>
+                  <li>
+                    <Link to="/activities-upload">
+                      {this.props.t("Activities Video")}
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/challenge-upload">
+                      {this.props.t("Challenge Video")}
+                    </Link>
+                  </li>
                 </ul>
               </li>) : ""}
             </ul>
