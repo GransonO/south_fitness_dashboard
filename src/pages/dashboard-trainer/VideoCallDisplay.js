@@ -43,13 +43,15 @@ class VideoCallDisplay extends Component {
         swal("Hey 🤣", "Only the trainer can start the video call", "info");
         return;
     }
+
     const urlParams = new URLSearchParams(window.location.search);
     let xUID = Math.floor(Math.random() * 1000000) + 1000;
 
     let objectVideo = {
         channel_name: urlParams.get("channel"),
         username: xUID, // localStorage.getItem("south_fitness_fullname"),
-        video_id: urlParams.get("video_id")
+        video_id: urlParams.get("video_id"),
+        can_start: true
       };
       await axios.post("https://south-fitness.herokuapp.com/videos/access_token/", objectVideo, {
           headers: {
