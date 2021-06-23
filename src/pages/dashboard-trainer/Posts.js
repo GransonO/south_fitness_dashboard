@@ -90,7 +90,7 @@ export default class Posts extends Component {
                           </div>) : ""}
                         <ul className="list-group list-group-flush">
                             {
-                                this.props.videos.length > 0 ? this.props.videos.map((post, key) => (<li className="list-group-item py-3" key={key}>
+                            this.props.videos.length > 0 ? this.props.videos.map((post, key) => (<li className="list-group-item py-3" key={key}>
                             <div className="d-flex">
                               <div className="mr-3">
                                 <img
@@ -103,7 +103,7 @@ export default class Posts extends Component {
                               <div className="align-self-center overflow-hidden mr-auto">
                                 <div>
                                   <h5 className="font-size-14 text-truncate">
-                                    <Link to="#" className="text-dark">
+                                    <Link to={"/video-call?video_id=" + post.video_id + "&channel=" + post.title.replaceAll(" ", "_")} className="text-dark">
                                       {post.title}
                                     </Link>
                                   </h5>
