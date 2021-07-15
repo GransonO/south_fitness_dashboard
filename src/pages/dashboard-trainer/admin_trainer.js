@@ -96,7 +96,7 @@ export default class Trainer extends Component {
 
   getAllBlogs = async() => {
 
-       fetch("https://south-fitness.herokuapp.com/blog/trainer/" + localStorage.getItem("south_fitness_UID"), {
+       fetch("https://southfitness.epitomesoftware.live/blog/trainer/" + localStorage.getItem("south_fitness_UID"), {
           method: "GET"
         })
         .then(response => response.json())
@@ -121,7 +121,7 @@ export default class Trainer extends Component {
 
   getAllVideos = async() => {
 
-       fetch("https://south-fitness.herokuapp.com/videos/trainer/" + localStorage.getItem("south_fitness_UID"), {
+       fetch("https://southfitness.epitomesoftware.live/videos/trainer/" + localStorage.getItem("south_fitness_UID"), {
           method: "GET"
         })
         .then(response => response.json())

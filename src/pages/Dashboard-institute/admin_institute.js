@@ -56,7 +56,7 @@ class Institute extends Component {
   }
 
   getChatGroups = async () => {
-       return fetch("https://south-fitness.herokuapp.com/chats/groups/all/" + localStorage.getItem("south_fitness_institution"), {
+       return fetch("https://southfitness.epitomesoftware.live/chats/groups/all/" + localStorage.getItem("south_fitness_institution"), {
           method: "GET"
         })
         .then(response => response.json())
@@ -76,7 +76,7 @@ class Institute extends Component {
   };
 
   getInstitutionMembers = async () => {
-      return fetch("https://south-fitness.herokuapp.com/profiles/institution/" + localStorage.getItem("south_fitness_institution"), {
+      return fetch("https://southfitness.epitomesoftware.live/profiles/institution/" + localStorage.getItem("south_fitness_institution"), {
           method: "GET"
         })
         .then(response => response.json())
@@ -96,7 +96,7 @@ class Institute extends Component {
 
   getAllVideos = async() => {
 
-       fetch("https://south-fitness.herokuapp.com/videos/trainer/" + localStorage.getItem("south_fitness_UID"), {
+       fetch("https://southfitness.epitomesoftware.live/videos/trainer/" + localStorage.getItem("south_fitness_UID"), {
           method: "GET"
         })
         .then(response => response.json())

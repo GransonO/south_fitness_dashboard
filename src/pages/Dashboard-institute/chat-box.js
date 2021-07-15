@@ -1,21 +1,21 @@
 import React, { Component } from "react"
 import {
-  Row,
-  Col,
-  Card,
-  CardBody,
-  Button,
-  UncontrolledDropdown,
-  UncontrolledTooltip,
-  Dropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
-  Form,
-  FormGroup,
-  Input,
-  InputGroup,
-  InputGroupAddon, Label, Media,
+    Row,
+    Col,
+    Card,
+    CardBody,
+    Button,
+    UncontrolledDropdown,
+    UncontrolledTooltip,
+    Dropdown,
+    DropdownToggle,
+    DropdownMenu,
+    DropdownItem,
+    Form,
+    FormGroup,
+    Input,
+    InputGroup,
+    InputGroupAddon, Label, Media, Spinner,
 } from "reactstrap"
 import { Link } from "react-router-dom"
 
@@ -25,11 +25,14 @@ import {db} from "../../services/firebase";
 import {v4 as uuidv4} from "uuid";
 import moment from "moment";
 import swal from "sweetalert";
+import ChatModal from "./ChatModal";
 
 class ChatBox extends Component {
   constructor(props) {
     super(props)
     this.state = {
+      modal: false,
+      chatCreating: false,
       messages: [],
       group:'',
       curMessage: "",
@@ -82,9 +85,69 @@ class ChatBox extends Component {
     this.fetchData(this.state.group);
   }
 
+
+  toggleModal = () => {
+    this.setState(prevState => ({
+      modal: !prevState.modal,
+    }))
+  };
+
+  addChatGroup = (title, slogan, image) => {
+      if(title === "" ||  slogan === "" ||  image === ""){
+        swal("🤨", "You need to fill all entries", "info");
+        return
+      }
+      this.setState({chatCreating: true});
+      let chatObject = {
+              "creator_name": localStorage.getItem("south_fitness_fullname"),
+              "created_by": localStorage.getItem("south_fitness_email"),
+              "user_id":localStorage.getItem("south_fitness_UID"),
+              "group_title": title,
+              "group_slogan": slogan,
+               "group_image": image
+          }
+          console.log("----------------The Chat-----------------", chatObject);
+
+       fetch("https://southfitness.epitomesoftware.live/chats/groups/", {
+          method: "POST",
+         headers: {
+                'Accept': 'application/json, text/plain',
+                'Content-Type': 'application/json;charset=UTF-8'
+            },
+           body: JSON.stringify({
+              "creator_name": localStorage.getItem("south_fitness_fullname"),
+              "user_id":localStorage.getItem("south_fitness_UID"),
+              "institution":localStorage.getItem("south_fitness_institution"),
+              "group_title": title,
+              "group_slogan": slogan,
+              "group_image": image
+          })
+        })
+        .then(response => response.json())
+        .then(response => {
+          console.log("----------------The Members List-----------------", response);
+          this.setState({chatCreating: false});
+          swal("Success!", "Group added success", "success").then((value) => {
+             location.reload();
+            });
+        })
+        .catch((error) => {
+          this.setState({chatCreating: false});
+          // Code for handling the error
+             swal("Failed!", "Group added failed", "info").then((value) => {
+             location.reload();
+            });
+        });
+  };
+
   render() {
     return (
       <React.Fragment>
+         <ChatModal
+          isOpen={this.state.modal}
+          toggle={this.toggleModal}
+          addChat={this.addChatGroup}
+        />
         <Col xl="12">
           <Card>
             <CardBody className="border-bottom">
@@ -96,18 +159,31 @@ class ChatBox extends Component {
                     Active now
                   </p>
                 </Col>
-                <Col md="6" xs="6">
-                  <FormGroup>
-                    <Label htmlFor="manufacturername">
-                      Select Group
-                    </Label>
-                    <select className="custom-select custom-select-sm form-control" onChange={e => this.userChatOpen(e.target.value)}>
-                      <option value="">Select Group</option>
-                      {this.props.groups.map(item => (
-                            <option key={item.group_id} value={item.group_id}>{item.group_title}</option>
-                        ))}
-                      </select>
-                  </FormGroup>
+                <Col md="6">
+                  <Row>
+                      <Col md="6">
+                      <FormGroup>
+                        <select className="custom-select custom-select-sm form-control" onChange={e => this.userChatOpen(e.target.value)}>
+                          <option value="">Select Group</option>
+                          {this.props.groups.map(item => (
+                                <option key={item.group_id} value={item.group_id}>{item.group_title}</option>
+                            ))}
+                          </select>
+                      </FormGroup>
+                  </Col>
+                      <Col md="6">
+                        <Button
+                          type="button"
+                          color="primary"
+                          size="sm"
+                          className="chat-send w-md waves-effect waves-light"
+                          onClick={this.toggleModal}
+                        >
+                            Add Chat Group
+                        </Button>
+                        {this.state.chatCreating ? <Spinner animation="grow" /> : ""}
+                      </Col>
+                  </Row>
                 </Col>
               </Row>
             </CardBody>

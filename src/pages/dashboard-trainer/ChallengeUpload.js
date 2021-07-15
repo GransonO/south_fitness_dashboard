@@ -43,6 +43,7 @@ class ChallengeVideos extends Component {
       rewards: 0,
       imageUploading: false,
       posting: false,
+      points: 0
     }
   }
 
@@ -132,10 +133,11 @@ class ChallengeVideos extends Component {
           image_url: this.state.videoImageUrl,
           duration: this.state.duration,
           duration_ext: this.state.duration_ext,
-          level: this.state.level
+          level: this.state.level,
+          points:this.state.rewards
       };
-
-      await axios.post("https://south-fitness.herokuapp.com/challenge/listed/", objectVideo, {
+      console.log("=================== > ", objectVideo);
+      await axios.post("https://southfitness.epitomesoftware.live/challenge/listed/", objectVideo, {
           headers: {
             'Content-Type': 'application/json',
           }
@@ -262,17 +264,30 @@ class ChallengeVideos extends Component {
                             <FormGroup>
                                 <Row>
                                     <Col sm="6">
-                                        <FormGroup>
-                                <Label className="control-label">Duration</Label>
-                                <Input
-                              id="manufacturerbrand"
-                              name="manufacturerbrand"
-                              type="number"
-                              onChange={(e) => this.setState({duration: e.target.value}) }
-                              value={this.state.duration}
-                              className="form-control"
-                            />
-                              </FormGroup>
+                                          <Row>
+                                          <Col sm="6">
+                                              <Label htmlFor="price">Rewards</Label>
+                                              <Input
+                                                  id="price"
+                                                  name="price"
+                                                  type="number"
+                                                  className="form-control"
+                                                  value={this.state.rewards}
+                                                  onChange={e => this.setState({rewards: e.target.value}) }
+                                                />
+                                          </Col>
+                                          <Col sm="6">
+                                              <Label htmlFor="price">Duration</Label>
+                                              <Input
+                                      id="price"
+                                      name="price"
+                                      type="number"
+                                      className="form-control"
+                                      value={this.state.duration}
+                                      onChange={e => this.setState({duration: e.target.value}) }
+                                    />
+                                          </Col>
+                                      </Row>
                                     </Col>
                                     <Col sm="6">
                                         <FormGroup>

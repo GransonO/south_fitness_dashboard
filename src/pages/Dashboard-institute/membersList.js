@@ -58,7 +58,7 @@ class MembersList extends Component {
         swal("🤨", "You need to fill all entries", "info");
         return
       }
-       fetch("https://south-fitness.herokuapp.com/auth/register", {
+       fetch("https://southfitness.epitomesoftware.live/auth/register", {
           method: "POST",
          headers: {
                 'Accept': 'application/json, text/plain',

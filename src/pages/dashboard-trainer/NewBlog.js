@@ -50,7 +50,7 @@ class NewBlog extends Component {
       views_count:0,
       reading_duration: this.state.duration + "mins"
     };
-      await axios.post("https://south-fitness.herokuapp.com/blog/", blogObject, {
+      await axios.post("https://southfitness.epitomesoftware.live/blog/", blogObject, {
           headers: {
             'Content-Type': 'application/json',
           }

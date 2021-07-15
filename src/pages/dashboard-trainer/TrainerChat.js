@@ -76,7 +76,7 @@ class TrainerChat extends Component {
   }
 
   getChatGroups = async () => {
-       fetch("https://south-fitness.herokuapp.com/chats/groups/all/" + localStorage.getItem("south_fitness_institution"), {
+       fetch("https://southfitness.epitomesoftware.live/chats/groups/all/" + localStorage.getItem("south_fitness_institution"), {
           method: "GET"
         })
         .then(response => response.json())

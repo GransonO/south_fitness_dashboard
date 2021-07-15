@@ -145,11 +145,6 @@ class SidebarContent extends Component {
                       <span>{this.props.t("Chat")}</span>
                     </Link>
                   </li>
-                  {/*<li>*/}
-                    {/*<Link to="/calendar" className=" waves-effect">*/}
-                      {/*<span>{this.props.t("Calendar")}</span>*/}
-                    {/*</Link>*/}
-                  {/*</li>*/}
                   <li>
                       <Link to="/new-blog">
                         {this.props.t("New Blog")}
@@ -157,19 +152,19 @@ class SidebarContent extends Component {
                   </li>
                   <li>
                     <Link to="/video-upload">
-                      {this.props.t("Upload Video")}
+                      {this.props.t("Schedule Classes")}
                     </Link>
                   </li>
                   <li>
                     <Link to="/activities-upload">
-                      {this.props.t("Activities Video")}
+                      {this.props.t("Suggested classes")}
                     </Link>
                   </li>
-                  <li>
-                    <Link to="/challenge-upload">
-                      {this.props.t("Challenge Video")}
-                    </Link>
-                  </li>
+                  {/*<li>*/}
+                    {/*<Link to="/challenge-upload">*/}
+                      {/*{this.props.t("Fitness Challenges")}*/}
+                    {/*</Link>*/}
+                  {/*</li>*/}
                 </ul>
               </li>) : ""}
             </ul>

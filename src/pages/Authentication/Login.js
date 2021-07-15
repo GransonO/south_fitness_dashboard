@@ -41,7 +41,7 @@ class Login extends Component {
         this.setState({
           login: true
         });
-         fetch('https://south-fitness.herokuapp.com/auth/login', {
+         fetch('https://southfitness.epitomesoftware.live/auth/login', {
            method: "POST",
            headers: {
                 'Accept': 'application/json, text/plain',

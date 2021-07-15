@@ -132,9 +132,11 @@ class UploadVideos extends Component {
           duration: this.state.duration,
           isScheduled: true,
           scheduledTime: this.state.scheduledTime,
-          scheduledDate: this.state.scheduledDate
+          scheduledDate: this.state.scheduledDate,
+          points: this.state.rewards
       };
-      await axios.post("https://south-fitness.herokuapp.com/videos/", objectVideo, {
+      console.log("=================== > ", objectVideo);
+      await axios.post("https://southfitness.epitomesoftware.live/videos/", objectVideo, {
           headers: {
             'Content-Type': 'application/json',
           }

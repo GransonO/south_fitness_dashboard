@@ -46,7 +46,7 @@ class ActivitiesVideos extends Component {
       level:'',
       equip:'',
       isComplete:false,
-      sets:0
+      sets:0,
     }
 
   }
@@ -140,10 +140,11 @@ class ActivitiesVideos extends Component {
           level:this.state.level,
           equip:this.state.equip,
           isComplete:false,
-          sets:this.state.sets
+          sets:this.state.sets,
+          points:this.state.rewards
       };
       console.log("===========================================", objectVideo);
-      await axios.post("https://south-fitness.herokuapp.com/videos/activities/", objectVideo, {
+      await axios.post("https://southfitness.epitomesoftware.live/videos/activities/", objectVideo, {
           headers: {
             'Content-Type': 'application/json',
           }
@@ -228,8 +229,21 @@ class ActivitiesVideos extends Component {
                           <FormGroup>
                               <Row>
                                   <Col sm="6">
-                                    <Label htmlFor="price">Duration</Label>
-                                    <Input
+                                      <Row>
+                                          <Col sm="6">
+                                              <Label htmlFor="price">Rewards</Label>
+                                              <Input
+                                                  id="price"
+                                                  name="price"
+                                                  type="number"
+                                                  className="form-control"
+                                                  value={this.state.rewards}
+                                                  onChange={e => this.setState({rewards: e.target.value}) }
+                                                />
+                                          </Col>
+                                          <Col sm="6">
+                                              <Label htmlFor="price">Duration</Label>
+                                              <Input
                                       id="price"
                                       name="price"
                                       type="number"
@@ -237,6 +251,8 @@ class ActivitiesVideos extends Component {
                                       value={this.state.duration}
                                       onChange={e => this.setState({duration: e.target.value}) }
                                     />
+                                          </Col>
+                                      </Row>
                                   </Col>
                                   <Col sm="6">
                                     <Label htmlFor="price">Duration ext</Label>

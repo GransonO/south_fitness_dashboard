@@ -53,7 +53,7 @@ class VideoCallDisplay extends Component {
         video_id: urlParams.get("video_id"),
         can_start: true
       };
-      await axios.post("https://south-fitness.herokuapp.com/videos/access_token/", objectVideo, {
+      await axios.post("https://southfitness.epitomesoftware.live/videos/access_token/", objectVideo, {
           headers: {
             'Content-Type': 'application/json',
           }
