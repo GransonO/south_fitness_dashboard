@@ -43,7 +43,8 @@ class ChallengeVideos extends Component {
       rewards: 0,
       imageUploading: false,
       posting: false,
-      points: 0
+      points: 0,
+      checked: false
     }
   }
 
@@ -169,7 +170,25 @@ class ChallengeVideos extends Component {
             {/* Render Breadcrumb */}
             <Breadcrumbs title="Challenge" breadcrumbItem="Add Challenge" />
 
-            <Row>
+            <Col sm="2">
+              <Card>
+               <CardBody>
+                   <Row>
+                     <div className="float-left">
+                      <Button type="button" color={this.state.checked ? "danger" : "primary"} onClick={ e => {
+                              this.setState({checked: !this.state.checked})
+                          }
+                        }
+                      >
+                        {this.state.checked ? "Cancel" : "Add A Challenge" }
+                      </Button>
+                  </div>
+                  </Row>
+               </CardBody>
+             </Card>
+            </Col>
+
+              {this.state.checked ? <Row>
               <Col xs="12">
                 <Card>
                   <CardBody>
@@ -488,7 +507,8 @@ class ChallengeVideos extends Component {
                   {this.state.posting ? <Spinner animation="grow" /> : ""}
                 </Form>
               </Col>
-            </Row>
+            </Row> : "" }
+
           </Container>
         </div>
       </React.Fragment>

@@ -22,7 +22,7 @@ import axios from "axios";
 import swal from "sweetalert";
 import ActivityPosts from "./ActivityPosts";
 
-class ActivitiesVideos extends Component {
+class ActivityUpdate extends Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -47,9 +47,8 @@ class ActivitiesVideos extends Component {
       isComplete:false,
       checked:false,
       sets:0,
-      allVideos: [],
+      activity_id: ""
     }
-
   }
 
   imageUpload = async (files) => {
@@ -122,15 +121,16 @@ class ActivitiesVideos extends Component {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i]
   }
 
-  postVideo = async (e) => {
+  putVideo = async (e) => {
     e.preventDefault();
     this.setState({
       posting: true
     });
     let objectVideo = {
+          activity_id: this.state.activity_id,
           uploaded_by: localStorage.getItem("south_fitness_fullname"),
           uploader_id:localStorage.getItem("south_fitness_UID"),
-          instructor: this.state.instructor,
+          instructor: localStorage.getItem("south_fitness_fullname"),
           title: this.state.title,
           details: this.state.description,
           video_url: this.state.videoUrl,
@@ -145,7 +145,7 @@ class ActivitiesVideos extends Component {
           points:this.state.rewards
       };
       console.log("===========================================", objectVideo);
-      await axios.post("https://southfitness.epitomesoftware.live/videos/activities/", objectVideo, {
+      await axios.put("https://southfitness.epitomesoftware.live/videos/activities/update/", objectVideo, {
           headers: {
             'Content-Type': 'application/json',
           }
@@ -153,8 +153,8 @@ class ActivitiesVideos extends Component {
         .then(
           response => {
           console.log("=================== > ", response.data);
-          swal("Success!", "Activity Posted Success", "success")
-
+          swal("Success!", "Activity Updated Success", "success")
+            window.location.href = "/activities-upload"
             this.setState({
               posting: false
             });
@@ -170,16 +170,37 @@ class ActivitiesVideos extends Component {
        );
   }
 
-  getTrainerActivities = async() => {
-       fetch("https://southfitness.epitomesoftware.live/videos/activities/" + localStorage.getItem("south_fitness_UID"), {
+  getActivity = async() => {
+
+        let param = new URL(window.location.href);
+        console.log(param.searchParams.get("id"))
+       fetch("https://southfitness.epitomesoftware.live/videos/activity/specific/" + param.searchParams.get("id"), {
           method: "GET"
         })
         .then(response => response.json())
         .then(response => {
 
            console.log("================= > The object is : ", response);
+           let activity = response[0];
           this.setState({
-            allVideos: response
+              activity_id: param.searchParams.get("id"),
+              videoUploading: false,
+              videoImageUrl:activity.image_url,
+              videoUrl:activity.video_url,
+              title: activity.title,
+              instructor:activity.uploaded_by,
+              description: activity.details,
+              type: activity.type,
+              duration: activity.duration,
+              duration_ext: activity.duration_ext,
+              rewards: activity.points,
+              imageUploading: false,
+              level:activity.level,
+              equip: activity.equip,
+              isComplete:false,
+              checked:false,
+              sets:activity.sets
+
           })
         })
         .catch((error) => {
@@ -189,7 +210,7 @@ class ActivitiesVideos extends Component {
   };
 
   componentDidMount() {
-    this.getTrainerActivities();
+    this.getActivity();
   }
 
   render() {
@@ -199,26 +220,7 @@ class ActivitiesVideos extends Component {
           <Container fluid>
             {/* Render Breadcrumb */}
             <Breadcrumbs title="Activities" breadcrumbItem="Add Activity" />
-
-            <Col sm="2">
-              <Card>
-               <CardBody>
-                   <Row>
-                     <div className="float-left">
-                      <Button type="button" color={this.state.checked ? "danger" : "primary"} onClick={ e => {
-                              this.setState({checked: !this.state.checked})
-                          }
-                        }
-                      >
-                        {this.state.checked ? "Cancel" : "Add A Challenge" }
-                      </Button>
-                  </div>
-                  </Row>
-               </CardBody>
-             </Card>
-            </Col>
-
-            {this.state.checked ? <Row>
+            <Row>
               <Col xs="12">
                 <Card>
                   <CardBody>
@@ -396,6 +398,25 @@ class ActivitiesVideos extends Component {
                     <CardBody>
                       <CardTitle className="mb-3">Activity Image</CardTitle>
                       <Form>
+                      <div>
+                        <Row className="align-items-center">
+                        <Col className="col-auto">
+                          <img
+                            data-dz-thumbnail=""
+                            height="100"
+                            className="avatar-sm rounded bg-light"
+                            alt=""
+                            src={this.state.videoImageUrl}
+                          />
+                        </Col>
+                        <Col>
+                          <p className="mb-0">
+                            <strong>Current Image</strong>
+                          </p>
+                        </Col>
+                      </Row>
+                        <br/>
+                    </div>
                       <Dropzone
                         accept={"image/*"}
                         onDrop={acceptedFiles =>
@@ -468,6 +489,26 @@ class ActivitiesVideos extends Component {
                         <CardBody>
                           <CardTitle className="mb-3">Introduction Video</CardTitle>
                               <Form>
+                                  <div>
+                                    <Row className="align-items-center">
+                                        <Col className="col-auto">
+                                          <video
+                                            data-dz-thumbnail=""
+                                            height="100"
+                                            className="avatar-sm rounded bg-light"
+                                            alt=""
+                                          >
+                                              <source src={this.state.videoUrl} type="video/*" />
+                                          </video>
+                                        </Col>
+                                        <Col>
+                                          <p className="mb-0">
+                                            <strong>Current Video</strong>
+                                          </p>
+                                        </Col>
+                                    </Row>
+                                    <br/>
+                                </div>
                             <Dropzone
                               accept={"video/*"}
                               onDrop={acceptedFiles =>
@@ -505,15 +546,6 @@ class ActivitiesVideos extends Component {
                                   >
                                     <div className="p-2">
                                       <Row className="align-items-center">
-                                        <Col className="col-auto">
-                                          <img
-                                            data-dz-thumbnail=""
-                                            height="80"
-                                            className="avatar-sm rounded bg-light"
-                                            alt={f.name}
-                                            src={f.preview}
-                                          />
-                                        </Col>
                                         <Col>
                                           <Link
                                             to="#"
@@ -541,24 +573,20 @@ class ActivitiesVideos extends Component {
                     type="button"
                     color="primary"
                     className="mr-1 waves-effect waves-light"
-                    onClick={e => this.postVideo(e)}
+                    onClick={e => this.putVideo(e)}
                   >
-                    Post Video
+                    Update Video
                   </Button>
                   <Button
                     type="submit"
                     color="secondary"
                     className="waves-effect"
                   >
-                    Cancel Posting
+                    Cancel Updating
                   </Button>
                   {this.state.posting ? <Spinner animation="grow" /> : ""}
                 </Form>
               </Col>
-            </Row> : "" }
-            <br/>
-            <Row>
-              <ActivityPosts videos={this.state.allVideos}  text={"Your Suggested Classes"} is_activity={true}/>
             </Row>
           </Container>
         </div>
@@ -567,4 +595,4 @@ class ActivitiesVideos extends Component {
   }
 }
 
-export default ActivitiesVideos
+export default ActivityUpdate

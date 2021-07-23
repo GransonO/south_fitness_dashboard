@@ -1,6 +1,16 @@
 import React, { Component } from "react"
 
-import {Card, CardBody, CardTitle, Badge, Button, Col} from "reactstrap"
+import {
+  Card,
+  CardBody,
+  CardTitle,
+  Badge,
+  Button,
+  Col,
+  DropdownToggle,
+  DropdownMenu,
+  UncontrolledDropdown
+} from "reactstrap"
 import { Link } from "react-router-dom"
 import swal from "sweetalert";
 import InstituteModal from "./InstituteModal";
@@ -10,38 +20,7 @@ class InstitutionList extends Component {
     super(props)
     this.state = {
       modal: false,
-      transactions: [
-         {
-          id: "customCheck2",
-          name: "Safaricom",
-          date: "07 Oct, 2019",
-          members: "400",
-          badgeClass: "success",
-          status: "Active",
-          admin: "Mrs Lucy Anny",
-          link: "#",
-        },
-        {
-          id: "customCheck3",
-          name: "Bata Shoe Company",
-          date: "03 Mar, 2020",
-          members: "130",
-          badgeClass: "success",
-          status: "Active",
-          admin: "Mr Dominic Son",
-          link: "#",
-        },
-        {
-          id: "customCheck4",
-          name: "Centum Group",
-          date: "05 Aug, 2020",
-          members: "40",
-          badgeClass: "success",
-          status: "Active",
-          admin: "Mr Awori Maina",
-          link: "#",
-        },
-      ],
+      allInstitutions: [],
     }
   }
 
@@ -51,48 +30,75 @@ class InstitutionList extends Component {
     }))
   }
 
-  registerUser = (object) => {
-    console.log("*********", this.state.transactions);
-    console.log("*********", typeof(this.state.transactions));
-    this.setState({
-      transactions: [...this.state.transactions, ...object]
-    });
-       // fetch("https://south-fitness.herokuapp.com/auth/register", {
-       //    method: "POST",
-       //   headers: {
-       //          'Accept': 'application/json, text/plain',
-       //          'Content-Type': 'application/json;charset=UTF-8'
-       //      },
-       //     body: JSON.stringify({
-       //        "email": email,
-       //        "firstname": fName,
-       //        "lastname": lName,
-       //        "password": "12345",
-       //        "user_type": userType,
-       //        "institution": localStorage.getItem("south_fitness_institution"),
-       //    })
-       //  })
-       //  .then(response => response.json())
-       //  .then(response => {
-       //    console.log("----------------The Members List-----------------", response);
-       //    swal("Success!", "Registration success", "success").then((value) => {
-       //       location.reload();
-       //      });
-       //  })
-       //  .catch((error) => {
-       //
-       //    // Code for handling the error
-       //  });
+
+   getInstitutions = async() => {
+
+       fetch("https://southfitness.epitomesoftware.live/institution/all/", {
+          method: "GET"
+        })
+        .then(response => response.json())
+        .then(response => {
+          console.log("----------------------", response);
+          this.setState({
+            allInstitutions: response
+          })
+        })
+        .catch((error) => {
+
+          // Code for handling the error
+        });
+  };
+
+  componentDidMount() {
+    this.getInstitutions();
+  }
+
+  deleteAccount = (id) => {
+    if(id === ""){
+        swal("🤨", "You need to enter institution id", "info");
+        return
+      }
+
+    swal({
+        title: "Confirm!",
+        text: "This account will be deleted",
+        type: "info",
+        buttons: "Okay"
+      }).then(okay => {
+           if (okay) {
+             this.deleteOkay(id)
+            }
+        });
+  };
+
+  deleteOkay = (id) => {
+       fetch("https://southfitness.epitomesoftware.live/institution/", {
+          method: "PUT",
+         headers: {
+                'Accept': 'application/json, text/plain',
+                'Content-Type': 'application/json;charset=UTF-8'
+            },
+           body: JSON.stringify({
+             institute_id: id,
+             is_active: false
+          })
+        })
+        .then(response => response.json())
+        .then(response => {
+          console.log("----------------The Members List-----------------", response);
+          swal("Success!", "Member updated success", "success").then((value) => {
+              location.reload();
+            });
+        })
+        .catch((error) => {
+
+          // Code for handling the error
+        });
   };
 
   render() {
     return (
       <React.Fragment>
-        <InstituteModal
-          isOpen={this.state.modal}
-          toggle={this.toggleModal}
-          register={this.registerUser}
-        />
         <Card>
           <CardBody>
             <CardTitle className="mb-12">
@@ -104,8 +110,8 @@ class InstitutionList extends Component {
                     type="button"
                     color="primary"
                     size="sm"
-                    className="btn-rounded waves-effect waves-light"
-                    onClick={this.toggleModal}
+                    className="chat-send w-md waves-effect waves-light"
+                    onClick={ e => window.location.href="/institution" }
                   >
                     Add Institution
                 </Button>
@@ -139,7 +145,7 @@ class InstitutionList extends Component {
                   </tr>
                 </thead>
                 <tbody>
-                  {this.state.transactions.map((transaction, key) => (
+                  {this.state.allInstitutions.map((transaction, key) => (
                     <tr key={"_tr_" + key}>
                       <td>
                         <div className="custom-control custom-checkbox">
@@ -159,37 +165,61 @@ class InstitutionList extends Component {
                       <td>
                         <Link to="#" className="text-body font-weight-bold">
                           {" "}
-                          {transaction.name}{" "}
+                          {transaction.institute_name}{" "}
                         </Link>{" "}
                       </td>
-                      <td>{transaction.date}</td>
-                      <td>{transaction.members}</td>
+                      <td>{transaction.createdAt}</td>
+                      <td>{0}</td>
                       <td>
                         <Badge
                           className={
-                            "font-size-12 badge-soft-" + transaction.badgeClass
+                            transaction.is_active ? "font-size-12 badge-soft-success" : "font-size-12 badge-soft-danger"
                           }
-                          color={transaction.badgeClass}
                           pill
                         >
-                          {transaction.status}
+                          {transaction.is_active ? "Active" : "InActive"}
                         </Badge>
                       </td>
                       <td>
-                        {transaction.admin}
+                        {transaction.institute_admin_name}
                       </td>
                       <td>
-                        <Button
-                          type="button"
-                          color="primary"
-                          size="sm"
-                          className="btn-rounded waves-effect waves-light"
-                          onClick={
-                            (e) => alert("Still working on this")
-                          }
-                        >
-                          View Details
-                        </Button>
+                        <UncontrolledDropdown
+                            className="dropdown"
+
+                          >
+                            <DropdownToggle
+                              className="text-muted font-size-16"
+                              color="white"
+                            >
+                              <i className="mdi mdi-dots-horizontal"></i>
+                            </DropdownToggle>
+                            <DropdownMenu className="dropdown-menu-right"  direction="right">
+                              <Link className="dropdown-item">
+                                <Button
+                                    type="button"
+                                    color="primary"
+                                    size="sm"
+                                    className="chat-send w-md waves-effect waves-light"
+                                    onClick={e => window.location.href = "/edit-institution?id=" + transaction.institute_id}
+                                  >
+                                  Update Institution
+                                </Button>
+                              </Link>
+                              <Link className="dropdown-item">
+                                <Button
+                                    type="button"
+                                    color="danger"
+                                    size="sm"
+                                    className="chat-send w-md waves-effect waves-light"
+                                    onClick={e => this.deleteAccount(transaction.institute_id)}
+                                  >
+                                  Delete Institution
+                                </Button>
+                              </Link>
+
+                            </DropdownMenu>
+                          </UncontrolledDropdown>
                       </td>
                     </tr>
                   ))}

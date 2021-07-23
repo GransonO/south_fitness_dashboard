@@ -28,7 +28,6 @@ class Institute extends Component {
   }
 
 
-  //https://south-fitness.herokuapp.com/chats/groups/all/SOUTH_FITNESS
   componentDidMount = async () =>  {
       let groupCount = await this.getChatGroups();
       let membersCount = await this.getInstitutionMembers();

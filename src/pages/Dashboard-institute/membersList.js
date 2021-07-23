@@ -12,38 +12,6 @@ class MembersList extends Component {
     this.state = {
       modal: false,
       allMembers: [],
-      transactions: [
-        {
-          id: "members1",
-          name: "Martha Smart",
-          date: "07 Oct, 2019",
-          team: "Speed",
-          department: "Sales",
-          badgeClass: "success",
-          status: "Active",
-          link: "#",
-        },
-        {
-          id: "members2",
-          name: "Victor Liss",
-          date: "07 Oct, 2020",
-          team: "Speed",
-          department: "UI",
-          badgeClass: "success",
-          status: "Active",
-          link: "#",
-        },
-        {
-          id: "members3",
-          name: "Aura Smith",
-          date: "09 Jun, 2020",
-          team: "Speed",
-          department: "Production",
-          badgeClass: "success",
-          status: "Active",
-          link: "#",
-        },
-      ],
     }
   }
 
@@ -77,6 +45,49 @@ class MembersList extends Component {
           console.log("----------------The Members List-----------------", response);
           swal("Success!", "Registration success", "success").then((value) => {
              location.reload();
+            });
+        })
+        .catch((error) => {
+
+          // Code for handling the error
+        });
+  };
+
+  deleteUser = (email, state) => {
+    if(email === ""){
+        swal("🤨", "You need to enter the users email", "info");
+        return
+      }
+
+    swal({
+        title: "Confirm!",
+        text: state ? "This User will be activated" : "This User will be deleted",
+        type: "info",
+        buttons: "Okay"
+      }).then(okay => {
+           if (okay) {
+             this.deleteOkay(email, state)
+            }
+        });
+  };
+
+  deleteOkay = (email, state) => {
+       fetch("https://southfitness.epitomesoftware.live/profiles/", {
+          method: "PUT",
+         headers: {
+                'Accept': 'application/json, text/plain',
+                'Content-Type': 'application/json;charset=UTF-8'
+            },
+           body: JSON.stringify({
+              "email": email,
+              "is_active": state
+          })
+        })
+        .then(response => response.json())
+        .then(response => {
+          console.log("----------------The Members List-----------------", response);
+          swal("Success!", "Member updated success", "success").then((value) => {
+              location.reload();
             });
         })
         .catch((error) => {
@@ -127,7 +138,7 @@ class MembersList extends Component {
                     <th>Joined Date</th>
                     <th>Department</th>
                     <th>Member Status</th>
-                    {/*<th></th>*/}
+                    <th>.</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -161,14 +172,36 @@ class MembersList extends Component {
                       <td>{transaction.team}</td>
                       <td>
                         <Badge
-                          className={
-                            "font-size-12 badge-soft-" + "success"
+                          className={ transaction.is_active ?
+                            "font-size-12 badge-soft-success": "font-size-12 badge-soft-danger"
                           }
-                          color={"success"}
                           pill
                         >
-                          {"Active"}
+                          {transaction.is_active ? "Active": "In Active"}
                         </Badge>
+                      </td>
+                      <td>
+                        {
+                          transaction.is_active ?
+                              <Button
+                                type="button"
+                                color="danger"
+                                size="sm"
+                                className="chat-send w-md waves-effect waves-light"
+                                onClick={e => this.deleteUser(transaction.email, false)}
+                              >
+                              Delete User
+                              </Button> :
+                              <Button
+                                type="button"
+                                color="success"
+                                size="sm"
+                                className="chat-send w-md waves-effect waves-light"
+                                onClick={e => this.deleteUser(transaction.email, true)}
+                              >
+                              Activate User
+                              </Button>
+                        }
                       </td>
                     </tr>
                   ))}

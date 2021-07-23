@@ -22,6 +22,7 @@ import {Link} from "react-router-dom";
 import axios from "axios";
 import { v4 as uuidv4 } from 'uuid';
 import swal from "sweetalert";
+import PopularPost from "./PopularPost";
 
 class NewBlog extends Component {
   constructor(props) {
@@ -34,7 +35,10 @@ class NewBlog extends Component {
       type:"",
       category:"",
       duration:0,
-      login:false
+      login:false,
+      checked:false,
+      allBlogs: [],
+      allComments: [],
     }
   }
 
@@ -118,13 +122,61 @@ class NewBlog extends Component {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i]
   }
 
+  getAllBlogs = async() => {
+
+       fetch("https://southfitness.epitomesoftware.live/blog/trainer/" + localStorage.getItem("south_fitness_UID"), {
+          method: "GET"
+        })
+        .then(response => response.json())
+        .then(response => {
+          let com = 0;
+          let leCome = [];
+              response.map((element) => {
+                    com = element.comments.length + com;
+                    leCome = leCome.concat(element.comments)
+                 });
+          this.setState({
+            total_count: com,
+            allBlogs: response,
+            allComments: leCome
+          })
+        })
+        .catch((error) => {
+
+          // Code for handling the error
+        });
+  };
+
+  componentDidMount() {
+    this.getAllBlogs();
+  }
+
   render() {
     return (
       <React.Fragment>
         <div className="page-content">
           <Container fluid={true}>
-            <Breadcrumbs title="Blog" breadcrumbItem="New Blog" />
-            <Card>
+            <Breadcrumbs title="Trainer" breadcrumbItem="Blogs" />
+
+            <Col sm="2">
+              <Card>
+               <CardBody>
+                   <Row>
+                     <div className="float-left">
+                      <Button type="button" color={this.state.checked ? "danger" : "primary"} onClick={ e => {
+                              this.setState({checked: !this.state.checked})
+                          }
+                        }
+                      >
+                        {this.state.checked ? "Cancel" : "Add A Blog" }
+                      </Button>
+                  </div>
+                  </Row>
+               </CardBody>
+             </Card>
+            </Col>
+
+            {this.state.checked ?  <Card>
               <CardBody>
                 <CardTitle>Basic Information</CardTitle>
                 <CardSubtitle className="mb-3">
@@ -257,9 +309,9 @@ class NewBlog extends Component {
                   </Row>
                 </Form>
               </CardBody>
-            </Card>
+            </Card> : ""}
 
-            <Row>
+            {this.state.checked ?  <Row>
               <Col>
                 <Card>
                   <CardBody>
@@ -303,6 +355,10 @@ class NewBlog extends Component {
                   </CardFooter>
                 </Card>
               </Col>
+            </Row> : ""}
+
+            <Row>
+              <PopularPost blogs={this.state.allBlogs}/>
             </Row>
 
           </Container>

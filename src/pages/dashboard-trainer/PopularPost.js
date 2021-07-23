@@ -76,19 +76,10 @@ export default class PopularPost extends Component {
                               <i className="mdi mdi-dots-horizontal"></i>
                             </DropdownToggle>
                             <DropdownMenu className="dropdown-menu-right"  direction="right">
-                              <Link className="dropdown-item" to="#">
-                                Action
+                              <Link className="dropdown-item" to={"/edit-blog?id=" + popularpost.blog_id}>
+                                Edit
                               </Link>
-                              <Link className="dropdown-item" to="#">
-                                Another action
-                              </Link>
-                              <Link className="dropdown-item" to="#">
-                                Something else
-                              </Link>
-                              <div className="dropdown-divider"></div>
-                              <Link className="dropdown-item" to="#">
-                                Separated link
-                              </Link>
+
                             </DropdownMenu>
                           </UncontrolledDropdown>
                         </td>

@@ -42,24 +42,7 @@ class Dashboard extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      reports: [
-        { title: "Trainers", iconClass: "bx-copy-alt", description: "35" },
-        {
-          title: "Institutions",
-          iconClass: "bx-archive-in",
-          description: "10",
-        },
-        {
-          title: "Total Members",
-          iconClass: "bx-purchase-tag-alt",
-          description: "300",
-        },
-      ],
-      email: [
-        { title: "Week", linkto: "#", isActive: false },
-        { title: "Month", linkto: "#", isActive: false },
-        { title: "Year", linkto: "#", isActive: true },
-      ],
+      reports: [],
       modal: false,
     }
     this.togglemodal.bind(this)
@@ -71,6 +54,60 @@ class Dashboard extends Component {
     }))
   };
 
+  getAllMembers = async() => {
+
+       fetch("https://southfitness.epitomesoftware.live/profiles/all/", {
+          method: "GET"
+        })
+        .then(response => response.json())
+        .then(response => {
+          this.setState({
+            reports: [
+                ...this.state.reports,
+               { title: "Trainers", iconClass: "bx-copy-alt", description: response.filter((item) => item.user_type === "TRAINER").length },
+               {
+                title: "Total Members",
+                iconClass: "bx-purchase-tag-alt",
+                description: response.filter((item) => item.user_type !== "TRAINER").length,
+              },
+            ]
+          })
+        })
+        .catch((error) => {
+          console.log("----------- ", error)
+          // Code for handling the error
+        });
+  };
+
+
+   getInstitutions = async() => {
+       fetch("https://southfitness.epitomesoftware.live/institution/all/", {
+          method: "GET"
+        })
+        .then(response => response.json())
+        .then(response => {
+          this.setState({
+            reports: [
+                ...this.state.reports,
+                {
+                title: "Institutions",
+                iconClass: "bx-archive-in",
+                description: response.length,
+              }
+            ],
+          })
+        })
+        .catch((error) => {
+
+          // Code for handling the error
+        });
+  };
+
+  componentDidMount() {
+    this.getInstitutions();
+    this.getAllMembers();
+  }
+
   render() {
     return (
       <React.Fragment>
@@ -78,14 +115,14 @@ class Dashboard extends Component {
           <Container fluid>
             {/* Render Breadcrumb */}
             <Breadcrumbs
-              title={this.props.t("Dashboards")}
+              title={this.props.t("Admin")}
               breadcrumbItem={this.props.t("Dashboard")}
             />
 
             <Row>
               <Col xl="4">
                 <WelcomeComp name={"South-Fitness"}/>
-                <MonthlyPerformance />
+                {/*<MonthlyPerformance />*/}
               </Col>
               <Col xl="8">
                 <Row>
@@ -116,44 +153,28 @@ class Dashboard extends Component {
                     </Col>
                   ))}
                 </Row>
+              </Col>
+            </Row>
 
-                <Card>
+            <Card>
                   <CardBody>
                     <CardTitle className="mb-4 float-sm-left">
                       Institutions Performance
                     </CardTitle>
-                    <div className="float-sm-right">
-                      <ul className="nav nav-pills">
-                        {this.state.email.map((mail, key) => (
-                          <li className="nav-item" key={"_li_" + key}>
-                            <Link
-                              className={
-                                mail.isActive ? "nav-link active" : "nav-link"
-                              }
-                              to={mail.linkto}
-                            >
-                              {mail.title}
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
                     <div className="clearfix"/>
                     <StackedColumnChart />
                   </CardBody>
                 </Card>
-              </Col>
-            </Row>
 
-            <Row>
-              <Col xl="4">
-                <ActivitySource />
-              </Col>
-              <Comments />
-              <Col xl="4">
-                <TopTrainers />
-              </Col>
-            </Row>
+            {/*<Row>*/}
+              {/*<Col xl="4">*/}
+                {/*<ActivitySource />*/}
+              {/*</Col>*/}
+              {/*<Comments />*/}
+              {/*<Col xl="4">*/}
+                {/*<TopTrainers />*/}
+              {/*</Col>*/}
+            {/*</Row>*/}
 
             <Row>
               <Col lg="12">

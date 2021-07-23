@@ -22,6 +22,7 @@ import * as moment from "moment";
 import axios from "axios";
 import swal from "sweetalert";
 import Loader from "react-loader-spinner";
+import ActivityPosts from "./ActivityPosts";
 
 class UploadVideos extends Component {
   constructor(props) {
@@ -42,6 +43,8 @@ class UploadVideos extends Component {
       scheduledDate: '',
       rewards: 0,
       imageUploading: false,
+      checked: false,
+      allVideos: [],
     }
   }
 
@@ -160,6 +163,27 @@ class UploadVideos extends Component {
        );
   }
 
+  getAllVideos = async() => {
+
+       fetch("https://southfitness.epitomesoftware.live/videos/trainer/" + localStorage.getItem("south_fitness_UID"), {
+          method: "GET"
+        })
+        .then(response => response.json())
+        .then(response => {
+          this.setState({
+            allVideos: response
+          })
+        })
+        .catch((error) => {
+
+          // Code for handling the error
+        });
+  };
+
+  componentDidMount() {
+    this.getAllVideos();
+  }
+
   render() {
     return (
       <React.Fragment>
@@ -168,7 +192,25 @@ class UploadVideos extends Component {
             {/* Render Breadcrumb */}
             <Breadcrumbs title="Videos" breadcrumbItem="Add Video" />
 
-            <Row>
+
+            <Col sm="2">
+              <Card>
+               <CardBody>
+                   <Row>
+                     <div className="float-left">
+                      <Button type="button" color={this.state.checked ? "danger" : "primary"} onClick={ e => {
+                              this.setState({checked: !this.state.checked})
+                          }
+                        }
+                      >
+                        {this.state.checked ? "Cancel" : "Add A Challenge" }
+                      </Button>
+                  </div>
+                  </Row>
+               </CardBody>
+             </Card>
+            </Col>
+            {this.state.checked ? <Row>
               <Col xs="12">
                 <Card>
                   <CardBody>
@@ -486,6 +528,9 @@ class UploadVideos extends Component {
                   {this.state.posting ? <Spinner animation="grow" /> : ""}
                 </Form>
               </Col>
+            </Row> : "" }
+            <Row>
+              <ActivityPosts videos={this.state.allVideos} text={"Your Scheduled Classes"} is_activity={false}/>
             </Row>
           </Container>
         </div>

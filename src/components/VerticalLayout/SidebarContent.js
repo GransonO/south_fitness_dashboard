@@ -147,7 +147,7 @@ class SidebarContent extends Component {
                   </li>
                   <li>
                       <Link to="/new-blog">
-                        {this.props.t("New Blog")}
+                        {this.props.t("Blogs")}
                       </Link>
                   </li>
                   <li>

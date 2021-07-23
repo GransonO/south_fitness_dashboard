@@ -18,11 +18,13 @@ import Dropzone from "react-dropzone"
 
 //Import Breadcrumb
 import Breadcrumbs from "../../components/Common/Breadcrumb"
+import * as moment from "moment";
 import axios from "axios";
 import swal from "sweetalert";
+import Loader from "react-loader-spinner";
 import ActivityPosts from "./ActivityPosts";
 
-class ActivitiesVideos extends Component {
+class EditVideos extends Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -36,20 +38,14 @@ class ActivitiesVideos extends Component {
       description: '',
       type: '',
       duration: 0,
-      duration_ext: '',
       scheduled: '',
       scheduledTime: '',
       scheduledDate: '',
       rewards: 0,
       imageUploading: false,
-      level:'',
-      equip:'',
-      isComplete:false,
-      checked:false,
-      sets:0,
+      checked: false,
       allVideos: [],
     }
-
   }
 
   imageUpload = async (files) => {
@@ -122,12 +118,13 @@ class ActivitiesVideos extends Component {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i]
   }
 
-  postVideo = async (e) => {
+  putVideo = async (e) => {
     e.preventDefault();
     this.setState({
-      posting: true
-    });
+              posting: true
+            });
     let objectVideo = {
+          video_id: this.state.video_id,
           uploaded_by: localStorage.getItem("south_fitness_fullname"),
           uploader_id:localStorage.getItem("south_fitness_UID"),
           instructor: this.state.instructor,
@@ -137,15 +134,13 @@ class ActivitiesVideos extends Component {
           type: this.state.type,
           image_url: this.state.videoImageUrl,
           duration: this.state.duration,
-          duration_ext: this.state.duration_ext,
-          level:this.state.level,
-          equip:this.state.equip,
-          isComplete:false,
-          sets:this.state.sets,
-          points:this.state.rewards
+          isScheduled: true,
+          scheduledTime: this.state.scheduledTime,
+          scheduledDate: this.state.scheduledDate,
+          points: this.state.rewards
       };
-      console.log("===========================================", objectVideo);
-      await axios.post("https://southfitness.epitomesoftware.live/videos/activities/", objectVideo, {
+      console.log("=================== > ", objectVideo);
+      await axios.put("https://southfitness.epitomesoftware.live/videos/update/", objectVideo, {
           headers: {
             'Content-Type': 'application/json',
           }
@@ -153,33 +148,48 @@ class ActivitiesVideos extends Component {
         .then(
           response => {
           console.log("=================== > ", response.data);
-          swal("Success!", "Activity Posted Success", "success")
-
+          swal("Success!", "Video Update Success", "success")
             this.setState({
               posting: false
             });
+          window.location.href = "/video-upload"
         }
         ).catch(
            response => {
              console.log("================= > The object is : ", response.data);
-             swal("Error!", "Activity Posted error", "error");
-            this.setState({
+             swal("Error!", "Video Update error", "error");
+             this.setState({
               posting: false
             });
            }
        );
   }
 
-  getTrainerActivities = async() => {
-       fetch("https://southfitness.epitomesoftware.live/videos/activities/" + localStorage.getItem("south_fitness_UID"), {
+
+  getVideo = async() => {
+
+        let param = new URL(window.location.href);
+        console.log(param.searchParams.get("id"))
+       fetch("https://southfitness.epitomesoftware.live/videos/" + param.searchParams.get("id"), {
           method: "GET"
         })
         .then(response => response.json())
         .then(response => {
 
            console.log("================= > The object is : ", response);
+           let activity = response[0];
           this.setState({
-            allVideos: response
+              video_id: param.searchParams.get("id"),
+              videoImageUrl:activity.image_url,
+              videoUrl:activity.video_url,
+              instructor:activity.instructor,
+              title:activity.title,
+              description: activity.details,
+              type: activity.type,
+              duration: activity.duration,
+              scheduledTime: activity.scheduledTime,
+              scheduledDate: activity.scheduledDate,
+              rewards: 0,
           })
         })
         .catch((error) => {
@@ -189,7 +199,7 @@ class ActivitiesVideos extends Component {
   };
 
   componentDidMount() {
-    this.getTrainerActivities();
+    this.getVideo();
   }
 
   render() {
@@ -198,27 +208,8 @@ class ActivitiesVideos extends Component {
         <div className="page-content">
           <Container fluid>
             {/* Render Breadcrumb */}
-            <Breadcrumbs title="Activities" breadcrumbItem="Add Activity" />
-
-            <Col sm="2">
-              <Card>
-               <CardBody>
-                   <Row>
-                     <div className="float-left">
-                      <Button type="button" color={this.state.checked ? "danger" : "primary"} onClick={ e => {
-                              this.setState({checked: !this.state.checked})
-                          }
-                        }
-                      >
-                        {this.state.checked ? "Cancel" : "Add A Challenge" }
-                      </Button>
-                  </div>
-                  </Row>
-               </CardBody>
-             </Card>
-            </Col>
-
-            {this.state.checked ? <Row>
+            <Breadcrumbs title="Videos" breadcrumbItem="Add Video" />
+            <Row>
               <Col xs="12">
                 <Card>
                   <CardBody>
@@ -231,7 +222,7 @@ class ActivitiesVideos extends Component {
                       <Row>
                         <Col sm="6">
                           <FormGroup>
-                            <Label htmlFor="productname">Activity Title</Label>
+                            <Label htmlFor="productname">Video Title</Label>
                             <Input
                               id="productname"
                               name="productname"
@@ -243,7 +234,7 @@ class ActivitiesVideos extends Component {
                           </FormGroup>
                           <FormGroup>
                             <Label htmlFor="manufacturername">
-                              Activity Instructor
+                              Video Instructor
                             </Label>
                             <Input
                               id="manufacturername"
@@ -270,41 +261,26 @@ class ActivitiesVideos extends Component {
                           <FormGroup>
                               <Row>
                                   <Col sm="6">
-                                      <Row>
-                                          <Col sm="6">
-                                              <Label htmlFor="price">Rewards</Label>
-                                              <Input
-                                                  id="price"
-                                                  name="price"
-                                                  type="number"
-                                                  className="form-control"
-                                                  value={this.state.rewards}
-                                                  onChange={e => this.setState({rewards: e.target.value}) }
-                                                />
-                                          </Col>
-                                          <Col sm="6">
-                                              <Label htmlFor="price">Duration</Label>
-                                              <Input
-                                      id="price"
-                                      name="price"
-                                      type="number"
-                                      className="form-control"
-                                      value={this.state.duration}
-                                      onChange={e => this.setState({duration: e.target.value}) }
-                                    />
-                                          </Col>
-                                      </Row>
+                                    <Label htmlFor="price">Duration(in minutes)</Label>
+                                    <Input
+                                  id="price"
+                                  name="price"
+                                  type="number"
+                                  className="form-control"
+                                  value={this.state.duration}
+                                  onChange={e => this.setState({duration: e.target.value}) }
+                                />
                                   </Col>
                                   <Col sm="6">
-                                    <Label htmlFor="price">Duration ext</Label>
-                                    <select
-                                        className="form-control select2"
-                                        onChange={e => this.setState({duration_ext: e.target.value}) }>
-                                          <option>Select</option>
-                                          <option value="DAYS" >Days</option>
-                                          <option value="WEEKS">Weeks</option>
-                                          <option value="MONTHS">Months</option>
-                                        </select>
+                                    <Label htmlFor="price">Rewards(Points per view)</Label>
+                                    <Input
+                                  id="price"
+                                  name="price"
+                                  type="number"
+                                  className="form-control"
+                                  value={this.state.rewards}
+                                  onChange={e => this.setState({rewards: e.target.value}) }
+                                />
                                   </Col>
                               </Row>
                           </FormGroup>
@@ -313,7 +289,7 @@ class ActivitiesVideos extends Component {
                           <Row>
                             <Col sm="6">
                               <FormGroup>
-                                <Label className="control-label">Activity Category</Label>
+                                <Label className="control-label">Video Category</Label>
                                 <select
                                     className="form-control select2"
                                     onChange={e => this.setState({type: e.target.value}) }
@@ -328,62 +304,58 @@ class ActivitiesVideos extends Component {
 
                             <Col sm="6">
                               <FormGroup>
-                                <Label className="control-label">Equipments Level</Label>
+                                <Label className="control-label">Is Scheduled</Label>
                                 <select
                                     className="form-control select2"
-                                    onChange={e => this.setState({equip: e.target.value}) }
+                                    onChange={e => this.setState({scheduled: e.target.value}) }
                                 >
                                   <option>Select</option>
-                                  <option value="BASIC" >BASIC</option>
-                                  <option value="INTERMEDIATE">INTERMEDIATE</option>
-                                  <option value="ADVANCED">ADVANCED</option>
+                                  <option value="True" >Is scheduled</option>
+                                  <option value="False">Is Not Scheduled</option>
                                 </select>
                               </FormGroup>
                             </Col>
                           </Row>
-                          <Row>
-                                  <Col sm="6">
-                                    <Label htmlFor="price">Fitness Level</Label>
-                                    <select
-                                        className="form-control select2"
-                                        onChange={e => this.setState({level: e.target.value}) }
-                                    >
-                                      <option>Select</option>
-                                      <option value="BASIC" >BASIC</option>
-                                      <option value="INTERMEDIATE">INTERMEDIATE</option>
-                                      <option value="ADVANCED">ADVANCED</option>
-                                    </select>
-                                  </Col>
-                                  <Col sm="6">
-                                    <Label htmlFor="price">Sets Per Workout</Label>
-                                    <Input
-                                  id="price"
-                                  name="price"
-                                  type="number"
-                                  className="form-control"
-                                  value={this.state.sets}
-                                  onChange={e => this.setState({sets: e.target.value}) }
-                                />
-                                  </Col>
-                            </Row>
-                          <Row>
-                              <Col sm="12">
-                                  <FormGroup>
-                                <Label htmlFor="productdesc">
-                                </Label>
-                                <Label htmlFor="productdesc">
-                                  Activity Description
-                                </Label>
-                                <textarea
-                                  className="form-control"
-                                  id="productdesc"
-                                  rows="5"
-                                  value={this.state.description}
-                                  onChange={e => this.setState({description: e.target.value}) }
-                                />
-                              </FormGroup>
+                           <Row>
+                              <Col sm="6">
+                                <FormGroup className="select2-container">
+                                <Label className="control-label">Date</Label>
+                                   <input
+                                      className="form-control"
+                                      type="date"
+                                      value={this.state.scheduledDate}
+                                      onChange={e => this.setState({scheduledDate: e.target.value}) }
+                                      defaultValue={moment()}
+                                      id="example-date-input"
+                                    />
+                                </FormGroup>
                               </Col>
-                          </Row>
+                              <Col sm="6">
+                                  <FormGroup className="select2-container">
+                                    <Label className="control-label">Time</Label>
+                                    <input
+                                      className="form-control"
+                                      type="time"
+                                      value={this.state.scheduledTime}
+                                      onChange={e => this.setState({scheduledTime: e.target.value}) }
+                                      defaultValue="13:45:00"
+                                      id="example-time-input"
+                                    />
+                                  </FormGroup>
+                                </Col>
+                           </Row>
+                          <FormGroup>
+                            <Label htmlFor="productdesc">
+                              Video Description
+                            </Label>
+                            <textarea
+                              className="form-control"
+                              id="productdesc"
+                              rows="5"
+                              value={this.state.description}
+                              onChange={e => this.setState({description: e.target.value}) }
+                            />
+                          </FormGroup>
                         </Col>
                       </Row>
                     </Form>
@@ -394,8 +366,27 @@ class ActivitiesVideos extends Component {
                   <Col sm="6">
                    <Card>
                     <CardBody>
-                      <CardTitle className="mb-3">Activity Image</CardTitle>
+                      <CardTitle className="mb-3">Video Image</CardTitle>
                       <Form>
+                      <div>
+                        <Row className="align-items-center">
+                        <Col className="col-auto">
+                          <img
+                            data-dz-thumbnail=""
+                            height="100"
+                            className="avatar-sm rounded bg-light"
+                            alt=""
+                            src={this.state.videoImageUrl}
+                          />
+                        </Col>
+                        <Col>
+                          <p className="mb-0">
+                            <strong>Current Image</strong>
+                          </p>
+                        </Col>
+                      </Row>
+                        <br/>
+                    </div>
                       <Dropzone
                         accept={"image/*"}
                         onDrop={acceptedFiles =>
@@ -468,6 +459,26 @@ class ActivitiesVideos extends Component {
                         <CardBody>
                           <CardTitle className="mb-3">Introduction Video</CardTitle>
                               <Form>
+                                                                    <div>
+                                    <Row className="align-items-center">
+                                        <Col className="col-auto">
+                                          <video
+                                            data-dz-thumbnail=""
+                                            height="100"
+                                            className="avatar-sm rounded bg-light"
+                                            alt=""
+                                          >
+                                              <source src={this.state.videoUrl} type="video/*" />
+                                          </video>
+                                        </Col>
+                                        <Col>
+                                          <p className="mb-0">
+                                            <strong>Current Video</strong>
+                                          </p>
+                                        </Col>
+                                    </Row>
+                                    <br/>
+                                </div>
                             <Dropzone
                               accept={"video/*"}
                               onDrop={acceptedFiles =>
@@ -505,15 +516,6 @@ class ActivitiesVideos extends Component {
                                   >
                                     <div className="p-2">
                                       <Row className="align-items-center">
-                                        <Col className="col-auto">
-                                          <img
-                                            data-dz-thumbnail=""
-                                            height="80"
-                                            className="avatar-sm rounded bg-light"
-                                            alt={f.name}
-                                            src={f.preview}
-                                          />
-                                        </Col>
                                         <Col>
                                           <Link
                                             to="#"
@@ -541,24 +543,20 @@ class ActivitiesVideos extends Component {
                     type="button"
                     color="primary"
                     className="mr-1 waves-effect waves-light"
-                    onClick={e => this.postVideo(e)}
+                    onClick={e => this.putVideo(e)}
                   >
-                    Post Video
+                    Update Video
                   </Button>
                   <Button
                     type="submit"
                     color="secondary"
                     className="waves-effect"
                   >
-                    Cancel Posting
+                    Cancel Update
                   </Button>
                   {this.state.posting ? <Spinner animation="grow" /> : ""}
                 </Form>
               </Col>
-            </Row> : "" }
-            <br/>
-            <Row>
-              <ActivityPosts videos={this.state.allVideos}  text={"Your Suggested Classes"} is_activity={true}/>
             </Row>
           </Container>
         </div>
@@ -567,4 +565,4 @@ class ActivitiesVideos extends Component {
   }
 }
 
-export default ActivitiesVideos
+export default EditVideos

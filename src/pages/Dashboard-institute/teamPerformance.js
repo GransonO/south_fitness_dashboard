@@ -15,7 +15,7 @@ class TeamPerformance extends Component {
         },
         {
           name: "TECHNOLOGY",
-          data: [0,0,0,0,50],
+          data: [0,0,0,0,0],
         },
         {
           name: "SALES",

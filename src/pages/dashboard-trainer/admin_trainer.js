@@ -4,20 +4,18 @@ import { Container, Row } from "reactstrap"
 import Breadcrumbs from "../../components/Common/Breadcrumb"
 import CardUser from "./CardUser"
 import Posts from "./Posts"
-import Settings from "./Settings"
 import Comments from "./Comments"
-import TapVisitors from "./TopVisitors"
 import Activity from "./Activity"
 import PopularPost from "./PopularPost"
 
 const series = [
   {
     name: "Blogs",
-    data: [18, 21, 45, 36, 65, 47, 51, 32, 40, 28, 31, 26],
+    data: [0,0,0,0,0,0,0,0,0,0,0,0],
   },
   {
     name: "Videos",
-    data: [30, 11, 22, 18, 32, 23, 58, 45, 30, 36, 15, 34],
+    data: [0,0,0,0,0,0,0,0,0,0,0,0],
   },
 ]
 

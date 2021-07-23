@@ -86,6 +86,7 @@ class MemberModal extends Component {
                   <select className="custom-select custom-select-sm form-control" onChange={e => this.setState({
                     user_type: e.target.value
                   })}>
+                      <option value="">Select Type</option>
                       <option value="ADMIN">Admin</option>
                       <option value="TRAINER">Trainer</option>
                       <option value="USER">Member</option>

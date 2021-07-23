@@ -34,6 +34,7 @@ import classnames from "classnames"
 import PerfectScrollbar from "react-perfect-scrollbar"
 import { v4 as uuidv4 } from 'uuid';
 import "react-perfect-scrollbar/dist/css/styles.css"
+import axios from "axios";
 
 //Import Breadcrumb
 import Breadcrumbs from "../../components/Common/Breadcrumb"
@@ -47,6 +48,7 @@ import {
 
 
 import { db } from "../../services/firebase";
+import swal from "sweetalert";
 
 class TrainerChat extends Component {
   constructor(props) {
@@ -59,6 +61,7 @@ class TrainerChat extends Component {
         userImage: localStorage.getItem("south_fitness_image"),
         isActive: true,
       },
+      groupId:"",
       allChats: [],
       messages: [],
       notification_Menu: false,
@@ -159,7 +162,7 @@ class TrainerChat extends Component {
 
   //Use For Chat Box
   userChatOpen = (id, name, status, roomId) => {
-    this.setState({ Chat_Box_Username: name, currentRoomId: roomId })
+    this.setState({ Chat_Box_Username: name, currentRoomId: roomId, groupId: id })
     this.fetchData(roomId)
   }
 
@@ -193,8 +196,51 @@ class TrainerChat extends Component {
     if (key === "Enter") {
       this.setState({ curMessage: value })
       this.addMessage(currentRoomId)
-      e.tar
+      e.target()
     }
+  }
+
+  deleteGroup = () => {
+    if(this.state.groupId === ""){
+        swal("🤨", "You need to select the group", "info");
+        return
+      }
+
+    swal({
+        title: "Confirm!",
+        text: "This group will be deleted",
+        type: "info",
+        buttons: "Okay"
+      }).then(okay => {
+           if (okay) {
+             this.deleteOkay()
+            }
+        });
+  };
+
+  deleteOkay = async () => {
+      let group = {
+        group_id: this.state.groupId,
+        is_closed: true,
+        isVerified: false
+      };
+       await axios.put("https://southfitness.epitomesoftware.live/chats/groups/", group, {
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        })
+        .then(
+          response => {
+          console.log("=================== > ", response.data);
+          swal("Success!", "Chat Group deleted", "success")
+          window.location.href = "/trainer_chat";
+        }
+        ).catch(
+           response => {
+             console.log("================= > The object is : ", response.data);
+             swal("Error!", "Chat Update error", "error");
+           }
+       );
   }
 
   render() {
@@ -433,12 +479,11 @@ class TrainerChat extends Component {
                                     <i className="bx bx-dots-horizontal-rounded"></i>
                                   </DropdownToggle>
                                   <DropdownMenu right>
-                                    <DropdownItem href="#">Action</DropdownItem>
-                                    <DropdownItem href="#">
-                                      Another Action
-                                    </DropdownItem>
-                                    <DropdownItem href="#">
-                                      Something else
+                                    <DropdownItem>
+                                      <Button type="button" color={"danger"} onClick={ e => {this.deleteGroup()}}
+                                      >
+                                    Delete Group
+                                  </Button>
                                     </DropdownItem>
                                   </DropdownMenu>
                                 </Dropdown>
