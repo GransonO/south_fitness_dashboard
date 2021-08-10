@@ -154,10 +154,11 @@ class ActivitiesVideos extends Component {
           response => {
           console.log("=================== > ", response.data);
           swal("Success!", "Activity Posted Success", "success")
-
             this.setState({
-              posting: false
+              posting: false,
+              checked: false
             });
+          this.getTrainerActivities();
         }
         ).catch(
            response => {
@@ -210,7 +211,7 @@ class ActivitiesVideos extends Component {
                           }
                         }
                       >
-                        {this.state.checked ? "Cancel" : "Add A Challenge" }
+                        {this.state.checked ? "Cancel" : "Add A class" }
                       </Button>
                   </div>
                   </Row>
@@ -328,7 +329,7 @@ class ActivitiesVideos extends Component {
 
                             <Col sm="6">
                               <FormGroup>
-                                <Label className="control-label">Equipments Level</Label>
+                                <Label className="control-label">Equipment</Label>
                                 <select
                                     className="form-control select2"
                                     onChange={e => this.setState({equip: e.target.value}) }

@@ -1,5 +1,5 @@
 import React, { Component } from "react"
-import { Container, Row, Col } from "reactstrap"
+import {Container, Row, Col, FormGroup, Button, Spinner} from "reactstrap"
 
 //Import Breadcrumb
 import Breadcrumbs from "../../components/Common/Breadcrumb"
@@ -24,38 +24,34 @@ class Institute extends Component {
       allMembers: [],
       reports: [],
       allVideos: [],
+      institutions: [],
+      institute_id: localStorage.getItem("south_fitness_institution_id"),
     }
   }
 
+   getInstitutions = async() => {
+       fetch("https://southfitness.epitomesoftware.live/institution/all/", {
+          method: "GET"
+        })
+        .then(response => response.json())
+        .then(response => {
+          console.log(response);
+          this.setState({
+          institutions: response,
+          })
+        })
+        .catch((error) => {
+
+          // Code for handling the error
+        });
+  };
 
   componentDidMount = async () =>  {
-      let groupCount = await this.getChatGroups();
-      let membersCount = await this.getInstitutionMembers();
-      console.log("membersCount===== ", membersCount);
-      this.getAllVideos();
-      this.setState({
-        reports: [
-        {
-          icon: "bx bx-copy-alt",
-          title: "Members",
-          value: membersCount,
-        },
-        {
-          icon: "bx bx-archive-in",
-          title: "Groups",
-          value: groupCount,
-        },
-        {
-          icon: "bx bx-purchase-tag-alt",
-          title: "General Performance",
-          value: "66.2 %",
-        },
-      ],
-      })
+    this.instituteChange(localStorage.getItem("south_fitness_institution_id"),);
   }
 
   getChatGroups = async () => {
-       return fetch("https://southfitness.epitomesoftware.live/chats/groups/all/" + localStorage.getItem("south_fitness_institution"), {
+       return fetch("https://southfitness.epitomesoftware.live/chats/groups/all/" + this.state.institute_id, {
           method: "GET"
         })
         .then(response => response.json())
@@ -75,7 +71,7 @@ class Institute extends Component {
   };
 
   getInstitutionMembers = async () => {
-      return fetch("https://southfitness.epitomesoftware.live/profiles/institution/" + localStorage.getItem("south_fitness_institution"), {
+      return fetch("https://southfitness.epitomesoftware.live/profiles/institution/" + this.state.institute_id, {
           method: "GET"
         })
         .then(response => response.json())
@@ -105,10 +101,39 @@ class Institute extends Component {
           })
         })
         .catch((error) => {
-
           // Code for handling the error
         });
   };
+
+  instituteChange = async (value) =>{
+      this.setState({
+          institute_id: value
+      });
+      let groupCount = await this.getChatGroups();
+      let membersCount = await this.getInstitutionMembers();
+      console.log("membersCount===== ", membersCount);
+      this.getAllVideos();
+      this.getInstitutions();
+      this.setState({
+        reports: [
+        {
+          icon: "bx bx-copy-alt",
+          title: "Members",
+          value: membersCount,
+        },
+        {
+          icon: "bx bx-archive-in",
+          title: "Groups",
+          value: groupCount,
+        },
+        {
+          icon: "bx bx-purchase-tag-alt",
+          title: "General Performance",
+          value: "0 %",
+        },
+      ],
+      })
+  }
 
   render() {
     return (
@@ -119,7 +144,20 @@ class Institute extends Component {
             <Breadcrumbs title="Dashboards" breadcrumbItem="Institute" />
 
             {/* Card User */}
-            <CardUser name={localStorage.getItem("south_fitness_fullname")} institute={localStorage.getItem("south_fitness_institution")}/>
+            <Col md="6">
+              <Row>
+                  <Col md="6">
+                  <FormGroup>
+                    <select className="custom-select custom-select-sm form-control" onChange={e => this.instituteChange(e.target.value)}>
+                      <option value="">Select Institution</option>
+                      {this.state.institutions.map(item => (
+                            <option key={item.id} value={item.institute_id}>{item.institute_name}</option>
+                        ))}
+                      </select>
+                  </FormGroup>
+              </Col>
+              </Row>
+            </Col>
 
             <Row>
               {/* welcome card */}
@@ -133,9 +171,9 @@ class Institute extends Component {
               </Col>
             </Row>
 
-            <Row>
-              <TeamPerformance />
-            </Row>
+            {/*<Row>*/}
+              {/*<TeamPerformance />*/}
+            {/*</Row>*/}
 
             {/* chat box */}
             <ChatBox groups={this.state.allGroups}/>

@@ -98,56 +98,56 @@ export default class CardUser extends Component {
             </Col>
           </Row>
 
-          <Card>
-            <CardBody>
-              <div className="d-flex flex-wrap">
-                <h5 className="card-title mr-2">Engagement</h5>
-              </div>
+          {/*<Card>*/}
+            {/*<CardBody>*/}
+              {/*<div className="d-flex flex-wrap">*/}
+                {/*<h5 className="card-title mr-2">Engagement</h5>*/}
+              {/*</div>*/}
 
-              <Row className="text-center">
-                <Col lg={4}>
-                  <div className="mt-4">
-                    <p className="text-muted mb-1">Today</p>
-                    <h5>74</h5>
-                  </div>
-                </Col>
+              {/*<Row className="text-center">*/}
+                {/*<Col lg={4}>*/}
+                  {/*<div className="mt-4">*/}
+                    {/*<p className="text-muted mb-1">Today</p>*/}
+                    {/*<h5>74</h5>*/}
+                  {/*</div>*/}
+                {/*</Col>*/}
 
-                <Col lg={4}>
-                  <div className="mt-4">
-                    <p className="text-muted mb-1">This Month</p>
-                    <h5>
-                      356{" "}
-                      <span className="text-success font-size-13">
-                        0.2 % <i className="mdi mdi-arrow-up ml-1"></i>
-                      </span>
-                    </h5>
-                  </div>
-                </Col>
+                {/*<Col lg={4}>*/}
+                  {/*<div className="mt-4">*/}
+                    {/*<p className="text-muted mb-1">This Month</p>*/}
+                    {/*<h5>*/}
+                      {/*356{" "}*/}
+                      {/*<span className="text-success font-size-13">*/}
+                        {/*0.2 % <i className="mdi mdi-arrow-up ml-1"></i>*/}
+                      {/*</span>*/}
+                    {/*</h5>*/}
+                  {/*</div>*/}
+                {/*</Col>*/}
 
-                <Col lg={4}>
-                  <div className="mt-4">
-                    <p className="text-muted mb-1">This Year</p>
-                    <h5>
-                      2354{" "}
-                      <span className="text-success font-size-13">
-                        0.1 % <i className="mdi mdi-arrow-up ml-1"></i>
-                      </span>
-                    </h5>
-                  </div>
-                </Col>
-              </Row>
+                {/*<Col lg={4}>*/}
+                  {/*<div className="mt-4">*/}
+                    {/*<p className="text-muted mb-1">This Year</p>*/}
+                    {/*<h5>*/}
+                      {/*2354{" "}*/}
+                      {/*<span className="text-success font-size-13">*/}
+                        {/*0.1 % <i className="mdi mdi-arrow-up ml-1"></i>*/}
+                      {/*</span>*/}
+                    {/*</h5>*/}
+                  {/*</div>*/}
+                {/*</Col>*/}
+              {/*</Row>*/}
 
-              <hr className="mb-4" />
-              <div className="apex-charts" id="area-chart" dir="ltr">
-                <ReactApexChart
-                  options={this.props.cardreport.options}
-                  series={this.props.cardreport.series}
-                  type="area"
-                  height={350}
-                />
-              </div>
-            </CardBody>
-          </Card>
+              {/*<hr className="mb-4" />*/}
+              {/*<div className="apex-charts" id="area-chart" dir="ltr">*/}
+                {/*<ReactApexChart*/}
+                  {/*options={this.props.cardreport.options}*/}
+                  {/*series={this.props.cardreport.series}*/}
+                  {/*type="area"*/}
+                  {/*height={350}*/}
+                {/*/>*/}
+              {/*</div>*/}
+            {/*</CardBody>*/}
+          {/*</Card>*/}
         </Col>
       </React.Fragment>
     )

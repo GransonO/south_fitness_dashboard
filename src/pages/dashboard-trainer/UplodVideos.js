@@ -147,10 +147,12 @@ class UploadVideos extends Component {
         .then(
           response => {
           console.log("=================== > ", response.data);
-          swal("Success!", "Video Posted Success", "success")
+          swal("Success!", "Video Posted Success", "success");
             this.setState({
-              posting: false
+              posting: false,
+              checked: false
             });
+          this.getAllVideos();
         }
         ).catch(
            response => {

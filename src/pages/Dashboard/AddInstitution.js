@@ -27,6 +27,9 @@ class AddInstitution extends Component {
     super(props)
     this.state = {
       selectedImageFiles: [],
+      selectedImageFiles1: [],
+      selectedImageFiles2: [],
+      selectedImageFiles3: [],
       instituteImageUrl: "",
       institute_name:"",
       admin_name:"",
@@ -34,7 +37,15 @@ class AddInstitution extends Component {
       last_name:"",
       admin_email:"",
       primary_color:"#fff",
+      primary_rgb:"#fff",
       secondary_color:"#fff",
+      secondary_rgb:"#fff",
+      institute_msg1: "",
+      institute_msg2: "",
+      institute_msg3: "",
+      institute_url1: "",
+      institute_url2: "",
+      institute_url3: "",
       login:false,
       posting:false,
       loading:false,
@@ -53,9 +64,19 @@ class AddInstitution extends Component {
         institute_name: this.state.institute_name,
         institute_admin_name: this.state.first_name + " " + this.state.last_name,
         institute_admin_email:this.state.admin_email,
-        institute_primary_color:this.state.primary_color,
-        institute_secondary_color:this.state.secondary_color,
+        institute_primary_color:this.state.primary_rgb,
+        institute_primary_hex:this.state.primary_color,
+        institute_secondary_color:this.state.secondary_rgb,
+        institute_secondary_hex:this.state.secondary_color,
         institute_logo:this.state.instituteImageUrl,
+
+        institute_message1:this.state.institute_msg1,
+        institute_message2:this.state.institute_msg2,
+        institute_message3:this.state.institute_msg3,
+
+        institute_img1:this.state.institute_url1,
+        institute_img2:this.state.institute_url2,
+        institute_img3:this.state.institute_url3,
         is_active: true
     };
       await axios.post("https://southfitness.epitomesoftware.live/institution/", instituteObject, {
@@ -79,12 +100,12 @@ class AddInstitution extends Component {
     console.log("The passed Blog is: > ", blogObject);
   };
 
-  imageUpload = async (files) => {
+  imageUpload = async (files, status) => {
     files.map( async (file) => {
       let data = new FormData();
 
       data.append("file", file);
-      data.append("upload_preset", "South_Fitness_video_imgs");
+      data.append("upload_preset", "South_Fitness_Institutions");
       data.append("cloud_name", "dolwj4vkq");
 
         await axios.post("https://api.cloudinary.com/v1_1/dolwj4vkq/image/upload", data, {
@@ -99,7 +120,20 @@ class AddInstitution extends Component {
               formattedSize: this.formatBytes(file.size),
             });
 
-            this.setState({ selectedImageFiles: files, instituteImageUrl: response.data.secure_url})
+            switch (status) {
+                case "logo":
+                    this.setState({ selectedImageFiles: files, instituteImageUrl: response.data.secure_url})
+                    break;
+                case "image1":
+                    this.setState({ selectedImageFiles1: files, institute_url1: response.data.secure_url})
+                    break;
+                case "image2":
+                    this.setState({ selectedImageFiles2: files, institute_url2: response.data.secure_url})
+                    break;
+                case "image3":
+                    this.setState({ selectedImageFiles3: files, institute_url3: response.data.secure_url})
+                    break;
+            }
           });
         }
     );
@@ -121,10 +155,12 @@ class AddInstitution extends Component {
 
   handleChangePrimary = (color) => {
     this.setState({ primary_color: color.hex });
+    this.setState({ primary_rgb: color.rgb.r + "," + color.rgb.g + "," + color.rgb.b + ","  + color.rgb.a });
   };
 
   handleChangeSecondary = (color) => {
     this.setState({ secondary_color: color.hex });
+    this.setState({ secondary_rgb: color.rgb.r + "," + color.rgb.g + "," + color.rgb.b + ","  + color.rgb.a });
   };
   render() {
     return (
@@ -251,7 +287,7 @@ class AddInstitution extends Component {
                               this.setState({
                                   loading: true
                                 });
-                               this.imageUpload(acceptedFiles)
+                               this.imageUpload(acceptedFiles, "logo")
                             }
                           }
                         >
@@ -277,6 +313,266 @@ class AddInstitution extends Component {
                           id="file-previews"
                         >
                           {this.state.selectedImageFiles.map((f, i) => {
+                            return (
+                              <Card
+                                className="mt-1 mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete"
+                                key={i + "-file"}
+                              >
+                                <div className="p-2">
+                                  <Row className="align-items-center">
+                                    <Col className="col-auto">
+                                      <img
+                                        data-dz-thumbnail=""
+                                        height="80"
+                                        className="avatar-sm rounded bg-light"
+                                        alt={f.name}
+                                        src={f.preview}
+                                      />
+                                    </Col>
+                                    <Col>
+                                      <Link
+                                        to="#"
+                                        className="text-muted font-weight-bold"
+                                      >
+                                        {f.name}
+                                      </Link>
+                                      <p className="mb-0">
+                                        <strong>{f.formattedSize}</strong>
+                                      </p>
+                                    </Col>
+                                  </Row>
+                                </div>
+                              </Card>
+                            )
+                          })}
+                        </div>
+                        <br/>
+                      </Form>
+                       </CardBody>
+                      </Card>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col sm="4">
+                      <FormGroup>
+                        <Label htmlFor="productname">Page 1 Message</Label>
+                        <textarea
+                          className="form-control"
+                          id="productdesc"
+                          rows="5"
+                          value={this.state.institute_msg1}
+                          onChange={e => this.setState({institute_msg1: e.target.value}) }
+                         />
+                      </FormGroup>
+                      <Card>
+                      <CardBody>
+                        <CardTitle className="mb-3">Entry Image 1</CardTitle>
+                        {this.state.loading ? <Spinner animation="grow" /> : ""}
+                        <Form>
+                        <Dropzone
+                          accept={"image/*"}
+                          onDrop={acceptedFiles => {
+                              this.setState({
+                                  loading: true
+                                });
+                               this.imageUpload(acceptedFiles, "image1")
+                            }
+                          }
+                        >
+                          {({ getRootProps, getInputProps }) => (
+                            <div className="dropzone">
+                              <div
+                                className="dz-message needsclick"
+                                {...getRootProps()}
+                              >
+                                <input {...getInputProps()} />
+                                <div className="dz-message needsclick">
+                                  <div className="mb-3">
+                                    <i className="display-4 text-muted bx bxs-cloud-upload" />
+                                  </div>
+                                  <h4>Drop or click to upload the Logo.</h4>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </Dropzone>
+                        <div
+                          className="dropzone-previews mt-3"
+                          id="file-previews"
+                        >
+                          {this.state.selectedImageFiles1.map((f, i) => {
+                            return (
+                              <Card
+                                className="mt-1 mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete"
+                                key={i + "-file"}
+                              >
+                                <div className="p-2">
+                                  <Row className="align-items-center">
+                                    <Col className="col-auto">
+                                      <img
+                                        data-dz-thumbnail=""
+                                        height="80"
+                                        className="avatar-sm rounded bg-light"
+                                        alt={f.name}
+                                        src={f.preview}
+                                      />
+                                    </Col>
+                                    <Col>
+                                      <Link
+                                        to="#"
+                                        className="text-muted font-weight-bold"
+                                      >
+                                        {f.name}
+                                      </Link>
+                                      <p className="mb-0">
+                                        <strong>{f.formattedSize}</strong>
+                                      </p>
+                                    </Col>
+                                  </Row>
+                                </div>
+                              </Card>
+                            )
+                          })}
+                        </div>
+                        <br/>
+                      </Form>
+                       </CardBody>
+                      </Card>
+                    </Col>
+                    <Col sm="4">
+                      <FormGroup>
+                        <Label htmlFor="productname">Page 2 Message</Label>
+                        <textarea
+                          className="form-control"
+                          id="productdesc"
+                          rows="5"
+                          value={this.state.institute_msg2}
+                          onChange={e => this.setState({institute_msg2: e.target.value}) }
+                         />
+                      </FormGroup>
+                      <Card>
+                      <CardBody>
+                        <CardTitle className="mb-3">Entry Image 2</CardTitle>
+                        {this.state.loading ? <Spinner animation="grow" /> : ""}
+                        <Form>
+                        <Dropzone
+                          accept={"image/*"}
+                          onDrop={acceptedFiles => {
+                              this.setState({
+                                  loading: true
+                                });
+                               this.imageUpload(acceptedFiles, "image2")
+                            }
+                          }
+                        >
+                          {({ getRootProps, getInputProps }) => (
+                            <div className="dropzone">
+                              <div
+                                className="dz-message needsclick"
+                                {...getRootProps()}
+                              >
+                                <input {...getInputProps()} />
+                                <div className="dz-message needsclick">
+                                  <div className="mb-3">
+                                    <i className="display-4 text-muted bx bxs-cloud-upload" />
+                                  </div>
+                                  <h4>Drop or click to upload the Logo.</h4>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </Dropzone>
+                        <div
+                          className="dropzone-previews mt-3"
+                          id="file-previews"
+                        >
+                          {this.state.selectedImageFiles2.map((f, i) => {
+                            return (
+                              <Card
+                                className="mt-1 mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete"
+                                key={i + "-file"}
+                              >
+                                <div className="p-2">
+                                  <Row className="align-items-center">
+                                    <Col className="col-auto">
+                                      <img
+                                        data-dz-thumbnail=""
+                                        height="80"
+                                        className="avatar-sm rounded bg-light"
+                                        alt={f.name}
+                                        src={f.preview}
+                                      />
+                                    </Col>
+                                    <Col>
+                                      <Link
+                                        to="#"
+                                        className="text-muted font-weight-bold"
+                                      >
+                                        {f.name}
+                                      </Link>
+                                      <p className="mb-0">
+                                        <strong>{f.formattedSize}</strong>
+                                      </p>
+                                    </Col>
+                                  </Row>
+                                </div>
+                              </Card>
+                            )
+                          })}
+                        </div>
+                        <br/>
+                      </Form>
+                       </CardBody>
+                      </Card>
+                    </Col>
+                    <Col sm="4">
+                      <FormGroup>
+                        <Label htmlFor="productname">Page 3 Message</Label>
+                        <textarea
+                          className="form-control"
+                          id="productdesc"
+                          rows="5"
+                          value={this.state.institute_msg3}
+                          onChange={e => this.setState({institute_msg3: e.target.value}) }
+                         />
+                      </FormGroup>
+                      <Card>
+                      <CardBody>
+                        <CardTitle className="mb-3">Entry Image 3</CardTitle>
+                        {this.state.loading ? <Spinner animation="grow" /> : ""}
+                        <Form>
+                        <Dropzone
+                          accept={"image/*"}
+                          onDrop={acceptedFiles => {
+                              this.setState({
+                                  loading: true
+                                });
+                               this.imageUpload(acceptedFiles, "image3")
+                            }
+                          }
+                        >
+                          {({ getRootProps, getInputProps }) => (
+                            <div className="dropzone">
+                              <div
+                                className="dz-message needsclick"
+                                {...getRootProps()}
+                              >
+                                <input {...getInputProps()} />
+                                <div className="dz-message needsclick">
+                                  <div className="mb-3">
+                                    <i className="display-4 text-muted bx bxs-cloud-upload" />
+                                  </div>
+                                  <h4>Drop or click to upload the Logo.</h4>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </Dropzone>
+                        <div
+                          className="dropzone-previews mt-3"
+                          id="file-previews"
+                        >
+                          {this.state.selectedImageFiles3.map((f, i) => {
                             return (
                               <Card
                                 className="mt-1 mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete"

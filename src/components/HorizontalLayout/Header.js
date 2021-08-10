@@ -94,7 +94,7 @@ class Header extends Component {
           <div className="navbar-header">
             <div className="d-flex">
               <div className="navbar-brand-box">
-                <Link to="/" className="logo logo-dark">
+                <Link to="/#" className="logo logo-dark">
                   <span className="logo-sm">
                     <img src={logo} alt="" height="22" />
                   </span>
@@ -103,7 +103,7 @@ class Header extends Component {
                   </span>
                 </Link>
 
-                <Link to="/" className="logo logo-light">
+                <Link to="/#" className="logo logo-light">
                   <span className="logo-sm">
                     <img src={logoLightSvg} alt="" height="22" />
                   </span>
@@ -330,19 +330,6 @@ class Header extends Component {
                   </form>
                 </div>
               </div>
-
-              <div className="dropdown d-none d-lg-inline-block ml-1">
-                <button
-                  type="button"
-                  className="btn header-item noti-icon waves-effect"
-                  onClick={this.toggleFullscreen}
-                  data-toggle="fullscreen"
-                >
-                  <i className="bx bx-fullscreen"/>
-                </button>
-              </div>
-
-              <NotificationDropdown />
 
               <ProfileMenu />
 

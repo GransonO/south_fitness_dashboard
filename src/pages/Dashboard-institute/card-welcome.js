@@ -13,7 +13,7 @@ const CardWelcome = props => {
               <Row>
                 <Col xs="7">
                   <div className="text-primary p-3">
-                    <h5 className="text-primary">Welcome Back !</h5>
+                    <h5 className="text-primary">{localStorage.getItem("south_fitness_fullname")}</h5>
                     <p>{props.name} Dashboard</p>
                   </div>
                 </Col>

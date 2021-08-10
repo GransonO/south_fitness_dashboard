@@ -33,6 +33,8 @@ class EditInstitution extends Component {
       first_name:"",
       last_name:"",
       admin_email:"",
+      primary_rgb:"#fff",
+      secondary_rgb:"#fff",
       primary_color:"#fff",
       secondary_color:"#fff",
       login:false,
@@ -54,8 +56,10 @@ class EditInstitution extends Component {
         institute_name: this.state.institute_name,
         institute_admin_name: this.state.first_name + " " + this.state.last_name,
         institute_admin_email:this.state.admin_email,
-        institute_primary_color:this.state.primary_color,
-        institute_secondary_color:this.state.secondary_color,
+        institute_primary_hex:this.state.primary_color,
+        institute_secondary_hex:this.state.secondary_color,
+        institute_primary_color:this.state.primary_rgb,
+        institute_secondary_color:this.state.secondary_rgb,
         institute_logo:this.state.instituteImageUrl,
         is_active: true
     };
@@ -125,10 +129,12 @@ class EditInstitution extends Component {
 
   handleChangePrimary = (color) => {
     this.setState({ primary_color: color.hex });
+    this.setState({ primary_rgb: color.rgb.r + "," + color.rgb.g + "," + color.rgb.b + ","  + color.rgb.a });
   };
 
   handleChangeSecondary = (color) => {
     this.setState({ secondary_color: color.hex });
+    this.setState({ secondary_rgb: color.rgb.r + "," + color.rgb.g + "," + color.rgb.b + ","  + color.rgb.a });
   };
 
   getInstitution = async () => {

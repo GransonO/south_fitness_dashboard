@@ -1,19 +1,19 @@
 import React, { Component } from "react"
 import PropTypes from 'prop-types'
 import {
-  Container,
-  Row,
-  Col,
-  Button,
-  Card,
-  CardBody,
-  CardTitle,
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Media,
-  Table,
+    Container,
+    Row,
+    Col,
+    Button,
+    Card,
+    CardBody,
+    CardTitle,
+    Modal,
+    ModalHeader,
+    ModalBody,
+    ModalFooter,
+    Media,
+    Table, FormGroup, Spinner,
 } from "reactstrap"
 import { Link } from "react-router-dom"
 
@@ -44,6 +44,7 @@ class Dashboard extends Component {
     this.state = {
       reports: [],
       modal: false,
+      totalMembers: []
     }
     this.togglemodal.bind(this)
   }
@@ -54,7 +55,7 @@ class Dashboard extends Component {
     }))
   };
 
-  getAllMembers = async() => {
+  getAllMembers = async () => {
 
        fetch("https://southfitness.epitomesoftware.live/profiles/all/", {
           method: "GET"
@@ -62,6 +63,7 @@ class Dashboard extends Component {
         .then(response => response.json())
         .then(response => {
           this.setState({
+            totalMembers: response,
             reports: [
                 ...this.state.reports,
                { title: "Trainers", iconClass: "bx-copy-alt", description: response.filter((item) => item.user_type === "TRAINER").length },
@@ -86,6 +88,7 @@ class Dashboard extends Component {
         })
         .then(response => response.json())
         .then(response => {
+          console.log(response);
           this.setState({
             reports: [
                 ...this.state.reports,
@@ -121,7 +124,7 @@ class Dashboard extends Component {
 
             <Row>
               <Col xl="4">
-                <WelcomeComp name={"South-Fitness"}/>
+                <WelcomeComp name={"South Fitness"}/>
                 {/*<MonthlyPerformance />*/}
               </Col>
               <Col xl="8">
@@ -156,15 +159,15 @@ class Dashboard extends Component {
               </Col>
             </Row>
 
-            <Card>
-                  <CardBody>
-                    <CardTitle className="mb-4 float-sm-left">
-                      Institutions Performance
-                    </CardTitle>
-                    <div className="clearfix"/>
-                    <StackedColumnChart />
-                  </CardBody>
-                </Card>
+            {/*<Card>*/}
+                  {/*<CardBody>*/}
+                    {/*<CardTitle className="mb-4 float-sm-left">*/}
+                      {/*Institutions Performance*/}
+                    {/*</CardTitle>*/}
+                    {/*<div className="clearfix"/>*/}
+                    {/*<StackedColumnChart />*/}
+                  {/*</CardBody>*/}
+                {/*</Card>*/}
 
             {/*<Row>*/}
               {/*<Col xl="4">*/}
@@ -178,106 +181,11 @@ class Dashboard extends Component {
 
             <Row>
               <Col lg="12">
-                <InstitutionList />
+                <InstitutionList totalMembers={this.state.totalMembers}/>
               </Col>
             </Row>
           </Container>
         </div>
-        <Modal
-          isOpen={this.state.modal}
-          role="dialog"
-          autoFocus={true}
-          centered={true}
-          className="exampleModal"
-          tabindex="-1"
-          toggle={this.togglemodal}
-        >
-          <div className="modal-content">
-            <ModalHeader toggle={this.togglemodal}>Order Details</ModalHeader>
-            <ModalBody>
-              <p className="mb-2">
-                Product id: <span className="text-primary">#SK2540</span>
-              </p>
-              <p className="mb-4">
-                Billing Name:{" "}
-                <span className="text-primary">Neal Matthews</span>
-              </p>
-
-              <div className="table-responsive">
-                <Table className="table table-centered table-nowrap">
-                  <thead>
-                    <tr>
-                      <th scope="col">Product</th>
-                      <th scope="col">Product Name</th>
-                      <th scope="col">Price</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <th scope="row">
-                        <div>
-                          <img src={modalimage1} alt="" className="avatar-sm" />
-                        </div>
-                      </th>
-                      <td>
-                        <div>
-                          <h5 className="text-truncate font-size-14">
-                            Wireless Headphone (Black)
-                          </h5>
-                          <p className="text-muted mb-0">$ 225 x 1</p>
-                        </div>
-                      </td>
-                      <td>$ 255</td>
-                    </tr>
-                    <tr>
-                      <th scope="row">
-                        <div>
-                          <img src={modalimage2} alt="" className="avatar-sm" />
-                        </div>
-                      </th>
-                      <td>
-                        <div>
-                          <h5 className="text-truncate font-size-14">
-                            Hoodie (Blue)
-                          </h5>
-                          <p className="text-muted mb-0">$ 145 x 1</p>
-                        </div>
-                      </td>
-                      <td>$ 145</td>
-                    </tr>
-                    <tr>
-                      <td colSpan="2">
-                        <h6 className="m-0 text-right">Sub Total:</h6>
-                      </td>
-                      <td>$ 400</td>
-                    </tr>
-                    <tr>
-                      <td colSpan="2">
-                        <h6 className="m-0 text-right">Shipping:</h6>
-                      </td>
-                      <td>Free</td>
-                    </tr>
-                    <tr>
-                      <td colSpan="2">
-                        <h6 className="m-0 text-right">Total:</h6>
-                      </td>
-                      <td>$ 400</td>
-                    </tr>
-                  </tbody>
-                </Table>
-              </div>
-            </ModalBody>
-            <ModalFooter>
-              <Button
-                type="button"
-                color="secondary"
-                onClick={this.togglemodal}
-              >
-                Close
-              </Button>
-            </ModalFooter>
-          </div>
-        </Modal>
       </React.Fragment>
     )
   }

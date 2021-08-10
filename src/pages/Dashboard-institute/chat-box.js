@@ -117,7 +117,7 @@ class ChatBox extends Component {
            body: JSON.stringify({
               "creator_name": localStorage.getItem("south_fitness_fullname"),
               "user_id":localStorage.getItem("south_fitness_UID"),
-              "institution":localStorage.getItem("south_fitness_institution"),
+              "institution_id":localStorage.getItem("south_fitness_institution_id"),
               "group_title": title,
               "group_slogan": slogan,
               "group_image": image

@@ -20,7 +20,7 @@ class InstitutionList extends Component {
     super(props)
     this.state = {
       modal: false,
-      allInstitutions: [],
+      allInstitutions: []
     }
   }
 
@@ -169,7 +169,7 @@ class InstitutionList extends Component {
                         </Link>{" "}
                       </td>
                       <td>{transaction.createdAt}</td>
-                      <td>{0}</td>
+                      <td>{this.props.totalMembers.length === 0 ? "0" : this.props.totalMembers.filter((item) => item.institution_id === transaction.institute_id).length }</td>
                       <td>
                         <Badge
                           className={

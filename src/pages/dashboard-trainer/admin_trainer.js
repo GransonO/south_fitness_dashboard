@@ -139,7 +139,6 @@ export default class Trainer extends Component {
     this.getAllVideos();
   }
 
-
   render() {
     return (
       <React.Fragment>

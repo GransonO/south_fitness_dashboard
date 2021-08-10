@@ -64,16 +64,17 @@ class Login extends Component {
               localStorage.setItem('south_fitness_email', response.profile.email);
               localStorage.setItem('south_fitness_image', response.profile.image);
               localStorage.setItem('south_fitness_type', response.profile.user_type);
-              localStorage.setItem('south_fitness_institution', response.profile.institution);
+              localStorage.setItem('south_fitness_institution', response.institution);
+              localStorage.setItem('south_fitness_institution_id', response.institution_id);
               localStorage.setItem('south_fitness_fullname', response.profile.fullname);
               localStorage.setItem('south_fitness_UID', response.profile.user_id);
               localStorage.setItem('authUser', JSON.stringify(response.profile));
               switch (response.profile.user_type) {
                   case "OVERVIEWER":
-                      window.location.href ="/dashboard";
+                      window.location.href ="/admin";
                       break;
                   case "ADMIN":
-                      window.location.href ="/admin";
+                      window.location.href ="/institute";
                       break;
                   case "TRAINER":
                       window.location.href ="/trainer";

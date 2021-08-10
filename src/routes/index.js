@@ -27,7 +27,6 @@ import NewBlog from "../pages/dashboard-trainer/NewBlog";
 import TrainerChat from "../pages/dashboard-trainer/TrainerChat";
 import VideoCallDisplay from "../pages/dashboard-trainer/VideoCallDisplay";
 import ActivitiesVideos from "../pages/dashboard-trainer/ActivitiesUpload";
-import ChallengeVideos from "../pages/dashboard-trainer/ChallengeUpload";
 import EditBlog from "../pages/dashboard-trainer/EditBlog";
 import ActivityUpdate from "../pages/dashboard-trainer/EditActivity";
 import EditVideos from "../pages/dashboard-trainer/EditVideos";
@@ -47,7 +46,6 @@ const authProtectedRoutes = [
   { path: "/video-upload", component: UploadVideos },
   { path: "/video-call", component: VideoCallDisplay },
   { path: "/activities-upload", component: ActivitiesVideos },
-  // { path: "/challenge-upload", component: ChallengeVideos },
 
   //calendar
   { path: "/calendar", component: Calendar },
@@ -59,8 +57,23 @@ const authProtectedRoutes = [
   { path: "/edit-institution", component: EditInstitution },
 
   // this route should be at the end of all other routes
-  { path: "/", exact: true, component: () => <Redirect to="/dashboard" /> },
+  { path: "/", exact: true, component: () => {
+      switch (localStorage.getItem("south_fitness_type")) {
+          case "OVERVIEWER":
+              window.location.href ="/admin";
+              break;
+          case "ADMIN":
+              window.location.href ="/institute";
+              break;
+          case "TRAINER":
+              window.location.href ="/trainer";
+              break;
+      }
+    }
+  },
 ]
+
+
 
 const publicRoutes = [
   { path: "/logout", component: Logout },

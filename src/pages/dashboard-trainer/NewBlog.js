@@ -63,7 +63,10 @@ class NewBlog extends Component {
           response => {
           console.log("=================== > ", response.data);
           swal("Success!", "Blog Posted Success", "success")
-          location.reload();
+              this.setState({
+                  checked:false,
+              })
+              this.getAllBlogs();
         }
         ).catch(
            response => {

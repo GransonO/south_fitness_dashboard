@@ -58,11 +58,7 @@ class ProfileMenu extends Component {
             <i className="mdi mdi-chevron-down d-none d-xl-inline-block"/>
           </DropdownToggle>
           <DropdownMenu right>
-            <DropdownItem tag="a" href="/profile">
-              <i className="bx bx-user font-size-16 align-middle mr-1"/>
-              {this.props.t("Profile")}
-            </DropdownItem>
-            <div className="dropdown-divider"/>
+            {/*<div className="dropdown-divider"/>*/}
             <Link to="/logout" className="dropdown-item">
               <i className="bx bx-power-off font-size-16 align-middle mr-1 text-danger"/>
               <span>{this.props.t("Logout")}</span>

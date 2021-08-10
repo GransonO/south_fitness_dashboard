@@ -38,6 +38,7 @@ class MembersList extends Component {
               "lastname": lName,
               "user_type": userType,
               "institution": localStorage.getItem("south_fitness_institution"),
+              "institution_id": localStorage.getItem("south_fitness_institution_id"),
           })
         })
         .then(response => response.json())
