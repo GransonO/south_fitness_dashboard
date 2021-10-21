@@ -54,8 +54,28 @@ class AddInstitution extends Component {
 
   addInstitution = async () => {
 
-      if(this.state.first_name === "" ||  this.state.institute_name === "" ||  this.state.last_name === "" ||  this.state.admin_email === "" ){
-        swal("🤨", "You need to fill all entries", "info");
+      if(
+          this.state.first_name === "" ||
+          this.state.institute_name === "" ||
+          this.state.last_name === "" ||
+          this.state.admin_email === "" ||
+          this.state.primary_color === "#fff" ||
+          this.state.secondary_color === "#fff" ||
+          this.state.instituteImageUrl === "" ||
+          this.state.institute_msg1 === "" ||
+          this.state.institute_msg2 === "" ||
+          this.state.institute_msg3 === "" ||
+          this.state.institute_url1 === "" ||
+          this.state.institute_url2 === "" ||
+          this.state.institute_url3 === ""
+      ){
+        swal("Error", "You need to fill all entries", "info");
+        return
+      }
+      const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      let validate = re.test(this.state.admin_email);
+      if(!validate){
+          swal("🤨", "Invalid email", "info");
         return
       }
 
@@ -79,7 +99,7 @@ class AddInstitution extends Component {
         institute_img3:this.state.institute_url3,
         is_active: true
     };
-      await axios.post("https://southfitness.epitomesoftware.live/institution/", instituteObject, {
+    await axios.post("https://southfitness.epitomesoftware.live/institution/", instituteObject, {
           headers: {
             'Content-Type': 'application/json',
           }
@@ -87,17 +107,16 @@ class AddInstitution extends Component {
         .then(
           response => {
           console.log("=================== > ", response.data);
-          swal("Success!", "Institution added Successfully", "success")
+          swal("Success!", "Institution added Successfully", "success");
           window.location.href = "/admin"
         }
         ).catch(
            response => {
              console.log("================= > The object is : ", response.data);
-            this.setState({posting: false})
+            this.setState({posting: false});
              swal("Error!", "Institution Posting error", "error");
            }
        );
-    console.log("The passed Blog is: > ", blogObject);
   };
 
   imageUpload = async (files, status) => {
@@ -162,6 +181,7 @@ class AddInstitution extends Component {
     this.setState({ secondary_color: color.hex });
     this.setState({ secondary_rgb: color.rgb.r + "," + color.rgb.g + "," + color.rgb.b + ","  + color.rgb.a });
   };
+
   render() {
     return (
       <React.Fragment>
@@ -278,11 +298,11 @@ class AddInstitution extends Component {
                     <Col sm="6">
                      <Card>
                       <CardBody>
-                        <CardTitle className="mb-3">Institution Logo</CardTitle>
+                        <CardTitle className="mb-3">Institution Logo (w:600px h:460px)</CardTitle>
                         {this.state.loading ? <Spinner animation="grow" /> : ""}
                         <Form>
                         <Dropzone
-                          accept={"image/*"}
+                          accept={'image/*'}
                           onDrop={acceptedFiles => {
                               this.setState({
                                   loading: true
@@ -355,13 +375,20 @@ class AddInstitution extends Component {
                   <Row>
                     <Col sm="4">
                       <FormGroup>
-                        <Label htmlFor="productname">Page 1 Message</Label>
+                        <Label htmlFor="productname">Page 1 Message (300 char)</Label>
                         <textarea
                           className="form-control"
                           id="productdesc"
                           rows="5"
                           value={this.state.institute_msg1}
-                          onChange={e => this.setState({institute_msg1: e.target.value}) }
+                          onChange={e => {
+                              if(this.state.institute_msg1.length > 300){
+                                  swal("Info", "The message is too long", "info");
+                              }else{
+                                  this.setState({institute_msg1: e.target.value})
+                              }
+                            }
+                          }
                          />
                       </FormGroup>
                       <Card>
@@ -441,13 +468,19 @@ class AddInstitution extends Component {
                     </Col>
                     <Col sm="4">
                       <FormGroup>
-                        <Label htmlFor="productname">Page 2 Message</Label>
+                        <Label htmlFor="productname">Page 2 Message (300 char)</Label>
                         <textarea
                           className="form-control"
                           id="productdesc"
                           rows="5"
                           value={this.state.institute_msg2}
-                          onChange={e => this.setState({institute_msg2: e.target.value}) }
+                          onChange={e => {
+                              if(this.state.institute_msg2.length > 300){
+                                  swal("Info", "The message is too long", "info");
+                              }else{
+                                  this.setState({institute_msg2: e.target.value})
+                              }
+                            }  }
                          />
                       </FormGroup>
                       <Card>
@@ -527,13 +560,21 @@ class AddInstitution extends Component {
                     </Col>
                     <Col sm="4">
                       <FormGroup>
-                        <Label htmlFor="productname">Page 3 Message</Label>
+                        <Label htmlFor="productname">Page 3 Message (300 char)</Label>
                         <textarea
                           className="form-control"
                           id="productdesc"
                           rows="5"
                           value={this.state.institute_msg3}
-                          onChange={e => this.setState({institute_msg3: e.target.value}) }
+                          onChange={e =>  {
+                              if(this.state.institute_msg3.length > 300){
+                                  swal("Info", "The message is too long", "info");
+                                  this.setState({institute_msg3: e.target.value})
+                              }else{
+                                  this.setState({institute_msg3: e.target.value})
+                              }
+                            }
+                          }
                          />
                       </FormGroup>
                       <Card>

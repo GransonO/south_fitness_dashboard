@@ -41,7 +41,6 @@ class Institute extends Component {
           })
         })
         .catch((error) => {
-
           // Code for handling the error
         });
   };
@@ -144,20 +143,23 @@ class Institute extends Component {
             <Breadcrumbs title="Dashboards" breadcrumbItem="Institute" />
 
             {/* Card User */}
-            <Col md="6">
-              <Row>
-                  <Col md="6">
-                  <FormGroup>
-                    <select className="custom-select custom-select-sm form-control" onChange={e => this.instituteChange(e.target.value)}>
-                      <option value="">Select Institution</option>
-                      {this.state.institutions.map(item => (
-                            <option key={item.id} value={item.institute_id}>{item.institute_name}</option>
-                        ))}
-                      </select>
-                  </FormGroup>
-              </Col>
-              </Row>
-            </Col>
+              {
+                  localStorage.getItem("south_fitness_type") === "OVERVIEWER" ?
+                      <Col md="6">
+                          <Row>
+                              <Col md="6">
+                              <FormGroup>
+                                <select className="custom-select custom-select-sm form-control" onChange={e => this.instituteChange(e.target.value)}>
+                                  <option value="">Select Institution</option>
+                                  {this.state.institutions.map(item => (
+                                        <option key={item.id} value={item.institute_id}>{item.institute_name}</option>
+                                    ))}
+                                  </select>
+                              </FormGroup>
+                              </Col>
+                           </Row>
+                       </Col> : ""
+              }
 
             <Row>
               {/* welcome card */}

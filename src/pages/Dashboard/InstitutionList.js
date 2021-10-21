@@ -61,7 +61,7 @@ class InstitutionList extends Component {
 
     swal({
         title: "Confirm!",
-        text: "This account will be deleted",
+        text: "This institution will be deleted",
         type: "info",
         buttons: "Okay"
       }).then(okay => {
@@ -86,7 +86,7 @@ class InstitutionList extends Component {
         .then(response => response.json())
         .then(response => {
           console.log("----------------The Members List-----------------", response);
-          swal("Success!", "Member updated success", "success").then((value) => {
+          swal("Success!", "Institution deleted success", "success").then((value) => {
               location.reload();
             });
         })

@@ -1,13 +1,13 @@
 import PropTypes from 'prop-types'
 import React, { Component } from "react"
-import { Alert, Card, CardBody, Col, Container, Row } from "reactstrap"
+import { Alert, Card, CardBody, Col, Container, Row, Input } from "reactstrap"
 
 // Redux
 import { connect } from "react-redux"
 import { Link, withRouter } from "react-router-dom"
 
 // availity-reactstrap-validation
-import { AvField, AvForm } from "availity-reactstrap-validation"
+import { AvForm } from "availity-reactstrap-validation"
 
 // action
 import { userForgetPassword } from "../../store/actions"
@@ -15,20 +15,93 @@ import { userForgetPassword } from "../../store/actions"
 // import images
 import profile from "../../assets/images/profile-img.png"
 import logo from "../../assets/images/logo.svg"
+import swal from "sweetalert";
 
 class ForgetPasswordPage extends Component {
   constructor(props) {
     super(props)
-    this.state = {}
-
-    // handleValidSubmit
-    this.handleValidSubmit = this.handleValidSubmit.bind(this)
+    this.state = {
+      email: "",
+      reset: false,
+      password: null,
+      confirm_password: null,
+      reset_code: null,
+    }
   }
 
-  // handleValidSubmit
-  handleValidSubmit(event, values) {
-    this.props.userForgetPassword(values, this.props.history)
-  }
+  resetEmail = async () => {
+        if(this.state.email === null ){
+            swal("Wait!", "Please enter the email", "info");
+            return
+        }
+
+        this.setState({
+          login: true
+        });
+         fetch('https://southfitness.epitomesoftware.live/auth/reset', {
+           method: "POST",
+           headers: {
+                'Accept': 'application/json, text/plain',
+                'Content-Type': 'application/json;charset=UTF-8'
+            },
+           body: JSON.stringify({
+              "email": this.state.email
+            })
+          })
+          .then(response => response.json())
+          .then(response => {
+            if(response.success){
+              swal("Success!", "reset success", "success");
+              this.setState({ reset: true });
+            }else{
+                swal("Fail!", "reset failed", "error");
+            }
+            // Code for handling the response
+          })
+          .catch((error) => {
+            // Code for handling the error
+          });
+    };
+
+  resetPassword = async () => {
+        if(this.state.password === null || this.state.confirm_password === null  || this.state.reset_code === null){
+            swal("Wait!", "Please fill all the details first", "info");
+            return
+        }
+        if(this.state.password !== this.state.confirm_password ){
+            swal("Error!", "Passwords dont match", "error");
+            return
+        }
+         fetch('https://southfitness.epitomesoftware.live/auth/reset', {
+           method: "PUT",
+           headers: {
+                'Accept': 'application/json, text/plain',
+                'Content-Type': 'application/json;charset=UTF-8'
+            },
+           body: JSON.stringify({
+              "email": this.state.email,
+              "code": this.state.reset_code,
+              "password": this.state.password,
+            })
+          })
+          .then(response => response.json())
+          .then(response => {
+            this.setState({
+              login: false
+            });
+            if(response.status === "success"){
+              swal("Success!", "Login success", "success");
+              window.location.href ="/login";
+            }else{
+                swal("Fail!", "Reset failed", "error");
+            }
+            // Code for handling the response
+          })
+          .catch((error) => {
+
+            // Code for handling the error
+          });
+    };
 
   render() {
     return (
@@ -47,8 +120,8 @@ class ForgetPasswordPage extends Component {
                     <Row>
                       <Col className="col-7">
                         <div className="text-primary p-4">
-                          <h5 className="text-primary">Welcome Back !</h5>
-                          <p>Sign in to continue to Skote.</p>
+                          <h5 className="text-primary">Password reset</h5>
+                          <p></p>
                         </div>
                       </Col>
                       <Col className="col-5 align-self-end">
@@ -72,31 +145,65 @@ class ForgetPasswordPage extends Component {
                       </Link>
                     </div>
                     <div className="p-2">
-                      {this.props.forgetError && this.props.forgetError ? (
-                        <Alert color="danger" style={{ marginTop: "13px" }}>
-                          {this.props.forgetError}
-                        </Alert>
-                      ) : null}
-                      {this.props.forgetSuccessMsg ? (
-                        <Alert color="success" style={{ marginTop: "13px" }}>
-                          {this.props.forgetSuccessMsg}
-                        </Alert>
-                      ) : null}
-
-                      <AvForm
+                    { this.state.reset ?  <AvForm
                         className="form-horizontal mt-4"
-                        onValidSubmit={this.handleValidSubmit}
+                        onValidSubmit={this.resetPassword}
                       >
                         <div className="form-group">
-                          <AvField
-                            name="email"
-                            label="Email"
+                          <p> Check your email for the reset code </p>
+                        </div>
+                        <div className="form-group">
+                            <Input
+                              name="email"
+                              label="Email"
+                              className="form-control"
+                              placeholder="Enter email"
+                              type="email"
+                              required
+                              disabled={true}
+                              value={this.state.email}
+                            />
+                          </div>
+
+                        <div className="form-group">
+                          <Input
+                            name="reset_code"
+                            label="Reset Code"
                             className="form-control"
-                            placeholder="Enter email"
-                            type="email"
+                            placeholder="Reset Code"
+                            type="number"
                             required
+                            value={this.state.reset_code}
+                            onChange={evt => this.setState({reset_code: evt.target.value})}
                           />
                         </div>
+
+                        <div className="form-group">
+                          <Input
+                            name="password"
+                            label="Password"
+                            className="form-control"
+                            placeholder="New password"
+                            type="password"
+                            required
+                            value={this.state.password}
+                            onChange={evt => this.setState({password: evt.target.value})}
+                          />
+                        </div>
+
+                        <div className="form-group">
+                          <Input
+                            name="confirm password"
+                            label="Confirm Password"
+                            className="form-control"
+                            placeholder="Confirm Password"
+                            type="password"
+                            required
+                            value={this.state.confirm_password}
+                            onChange={evt => this.setState({confirm_password: evt.target.value})}
+                          />
+                        </div>
+
                         <Row className="form-group">
                           <Col className="text-right">
                             <button
@@ -107,7 +214,33 @@ class ForgetPasswordPage extends Component {
                             </button>
                           </Col>
                         </Row>
-                      </AvForm>
+                      </AvForm> : <AvForm
+                        className="form-horizontal mt-4"
+                        onValidSubmit={this.resetEmail}
+                      >
+                        <div className="form-group">
+                          <Input
+                            name="email"
+                            label="Email"
+                            className="form-control"
+                            placeholder="Enter email"
+                            type="email"
+                            required
+                            value={this.state.email}
+                            onChange={evt => this.setState({email: evt.target.value})}
+                          />
+                        </div>
+                        <Row className="form-group">
+                          <Col className="text-right">
+                            <button
+                              className="btn btn-primary w-md waves-effect waves-light"
+                              type="submit"
+                            >
+                              Submit
+                            </button>
+                          </Col>
+                        </Row>
+                      </AvForm> }
                     </div>
                   </CardBody>
                 </Card>
@@ -122,8 +255,7 @@ class ForgetPasswordPage extends Component {
                     </Link>{" "}
                   </p>
                   <p>
-                    © {new Date().getFullYear()} Skote. Crafted with{" "}
-                    <i className="mdi mdi-heart text-danger" /> by Themesbrand
+                    © {new Date().getFullYear()} South Fitness
                   </p>
                 </div>
               </Col>

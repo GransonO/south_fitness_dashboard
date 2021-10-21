@@ -19,6 +19,7 @@ import Dropzone from "react-dropzone"
 //Import Breadcrumb
 import Breadcrumbs from "../../components/Common/Breadcrumb"
 import swal from "sweetalert";
+import axios from "axios";
 import {HuePicker } from 'react-color';
 
 class EditInstitution extends Component {

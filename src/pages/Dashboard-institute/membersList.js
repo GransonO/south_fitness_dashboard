@@ -26,6 +26,13 @@ class MembersList extends Component {
         swal("🤨", "You need to fill all entries", "info");
         return
       }
+      let value = this.props.members.filter(e => e.email === email);
+      if(value.length > 0){
+       swal("Error!", "User with email exists", "info");
+       this.toggleModal();
+      return
+      }
+
        fetch("https://southfitness.epitomesoftware.live/auth/register", {
           method: "POST",
          headers: {
@@ -191,7 +198,7 @@ class MembersList extends Component {
                                 className="chat-send w-md waves-effect waves-light"
                                 onClick={e => this.deleteUser(transaction.email, false)}
                               >
-                              Delete User
+                              Deactivate
                               </Button> :
                               <Button
                                 type="button"
@@ -200,7 +207,7 @@ class MembersList extends Component {
                                 className="chat-send w-md waves-effect waves-light"
                                 onClick={e => this.deleteUser(transaction.email, true)}
                               >
-                              Activate User
+                              Activate
                               </Button>
                         }
                       </td>

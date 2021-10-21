@@ -20,6 +20,7 @@ import ForgetPwd from "../pages/Authentication/ForgetPassword"
 import Dashboard from "../pages/Dashboard/index"
 import Institute from "../pages/Dashboard-institute/admin_institute";
 import Admin from "../pages/Dashboard/admin_main"
+import AdminRegister from "../pages/Authentication/Admin_Register";
 
 import Trainer from "../pages/dashboard-trainer/admin_trainer";
 import UploadVideos from "../pages/dashboard-trainer/UplodVideos";
@@ -71,15 +72,14 @@ const authProtectedRoutes = [
       }
     }
   },
-]
-
-
+];
 
 const publicRoutes = [
   { path: "/logout", component: Logout },
   { path: "/login", component: Login },
   { path: "/forgot-password", component: ForgetPwd },
   { path: "/register", component: Register },
-]
+  { path: "/register_admin", component: AdminRegister },
+];
 
 export { authProtectedRoutes, publicRoutes }

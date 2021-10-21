@@ -131,7 +131,7 @@ class SidebarContent extends Component {
                   </li>
                 </ul>
               </li>) : ""}
-              {localStorage.getItem("south_fitness_type") === "OVERVIEWER" || localStorage.getItem("south_fitness_type") === "ADMIN" || localStorage.getItem("south_fitness_type") === "TRAINER" ? (<li>
+              {localStorage.getItem("south_fitness_type") === "OVERVIEWER" || localStorage.getItem("south_fitness_type") === "TRAINER" ? (<li>
                 <Link to="/#" className="has-arrow waves-effect">
                   <i className="bx bx-store" />
                   <span>{this.props.t("Trainer Dash")}</span>

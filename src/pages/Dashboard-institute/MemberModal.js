@@ -88,7 +88,6 @@ class MemberModal extends Component {
                   })}>
                       <option value="">Select Type</option>
                       <option value="ADMIN">Admin</option>
-                      <option value="TRAINER">Trainer</option>
                       <option value="USER">Member</option>
                     </select>
                 </FormGroup>
