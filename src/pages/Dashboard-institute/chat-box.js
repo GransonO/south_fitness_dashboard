@@ -68,6 +68,10 @@ class ChatBox extends Component {
        swal("Wait!", "Please select a group to post to first", "info");
        return;
     }
+    if(this.state.curMessage === ''){
+       swal("Wait!", "Cannot send empty messages", "info");
+       return;
+    }
     let now = new Date();
     const message = {
      "group_id": this.state.group,
@@ -83,7 +87,12 @@ class ChatBox extends Component {
     console.log("-------------------Cur Message---------> ", message);
     await db.collection(this.state.group).add(message);
     this.fetchData(this.state.group);
-  }
+    this.setState(
+        {
+            curMessage: ""
+        }
+    )
+  };
 
 
   toggleModal = () => {
@@ -192,7 +201,7 @@ class ChatBox extends Component {
                 <div className="chat-conversation">
                   <SimpleBar style={{ maxHeight: "300px" }}>
                     <ul className="list-unstyled">
-                      {this.state.messages.map(message => (
+                      {this.state.messages.reverse().map(message => (
                        <li
                           key={"test_k" + message.message_id}
                           className={
@@ -257,52 +266,52 @@ class ChatBox extends Component {
                       className="form-control rounded chat-input"
                       placeholder="Enter Message..."
                     />
-                    <div className="chat-input-links">
-                      <ul className="list-inline mb-0">
-                        <li className="list-inline-item">
-                          <Link to="#">
-                            <i
-                              className="mdi mdi-emoticon-happy-outline"
-                              id="Emojitooltip"
-                              />
-                            <UncontrolledTooltip
-                              placement="top"
-                              target="Emojitooltip"
-                            >
-                              Emojis
-                            </UncontrolledTooltip>
-                          </Link>
-                        </li>
-                        <li className="list-inline-item">
-                          <Link to="#">
-                            <i
-  className="mdi mdi-file-image-outline"
-  id="Imagetooltip"
-  />
-                            <UncontrolledTooltip
-                              placement="top"
-                              target="Imagetooltip"
-                            >
-                              Images
-                            </UncontrolledTooltip>
-                          </Link>
-                        </li>
-                        <li className="list-inline-item">
-                          <Link to="#">
-                            <i
-  className="mdi mdi-file-document-outline"
-  id="Filetooltip"
-  />
-                            <UncontrolledTooltip
-                              placement="top"
-                              target="Filetooltip"
-                            >
-                              Add Files
-                            </UncontrolledTooltip>
-                          </Link>
-                        </li>
-                      </ul>
-                    </div>
+                    {/*<div className="chat-input-links">*/}
+                      {/*<ul className="list-inline mb-0">*/}
+                        {/*<li className="list-inline-item">*/}
+                          {/*<Link to="#">*/}
+                            {/*<i*/}
+                              {/*className="mdi mdi-emoticon-happy-outline"*/}
+                              {/*id="Emojitooltip"*/}
+                              {/*/>*/}
+                            {/*<UncontrolledTooltip*/}
+                              {/*placement="top"*/}
+                              {/*target="Emojitooltip"*/}
+                            {/*>*/}
+                              {/*Emojis*/}
+                            {/*</UncontrolledTooltip>*/}
+                          {/*</Link>*/}
+                        {/*</li>*/}
+                        {/*<li className="list-inline-item">*/}
+                          {/*<Link to="#">*/}
+                            {/*<i*/}
+  {/*className="mdi mdi-file-image-outline"*/}
+  {/*id="Imagetooltip"*/}
+  {/*/>*/}
+                            {/*<UncontrolledTooltip*/}
+                              {/*placement="top"*/}
+                              {/*target="Imagetooltip"*/}
+                            {/*>*/}
+                              {/*Images*/}
+                            {/*</UncontrolledTooltip>*/}
+                          {/*</Link>*/}
+                        {/*</li>*/}
+                        {/*<li className="list-inline-item">*/}
+                          {/*<Link to="#">*/}
+                            {/*<i*/}
+  {/*className="mdi mdi-file-document-outline"*/}
+  {/*id="Filetooltip"*/}
+  {/*/>*/}
+                            {/*<UncontrolledTooltip*/}
+                              {/*placement="top"*/}
+                              {/*target="Filetooltip"*/}
+                            {/*>*/}
+                              {/*Add Files*/}
+                            {/*</UncontrolledTooltip>*/}
+                          {/*</Link>*/}
+                        {/*</li>*/}
+                      {/*</ul>*/}
+                    {/*</div>*/}
                   </div>
                 </Col>
                 <div className="col-auto">
