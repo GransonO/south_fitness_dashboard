@@ -120,6 +120,10 @@ class UploadVideos extends Component {
 
   postVideo = async (e) => {
     e.preventDefault();
+    if(this.state.title === "" || this.state.description === "" || this.state.videoImageUrl === "" || this.state.instructor === "" || this.state.type === ""){
+        swal("Error!", "Please fill all entries", "info");
+        return
+    }
     this.setState({
               posting: true
             });

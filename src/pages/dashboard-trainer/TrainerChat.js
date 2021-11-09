@@ -22,7 +22,7 @@ import {
   Nav,
   NavItem,
   NavLink,
-  Row,
+  Row, Spinner,
   TabContent,
   TabPane,
   UncontrolledDropdown,
@@ -73,13 +73,15 @@ class TrainerChat extends Component {
       Chat_Box_User_Status: "Online",
       Chat_Box_User_isActive: false,
       curMessage: "",
-      chatImageUrl: "no image"
+      chatImageUrl: "no image",
+      loading: false,
+      fetching: false,
     }
     this.messageBox = null
   }
 
   getChatGroups = async () => {
-       fetch("https://southfitness.epitomesoftware.live/chats/groups/all/" + localStorage.getItem("south_fitness_institution"), {
+       fetch("https://southfitness.epitomesoftware.live/chats/groups/all/", {
           method: "GET"
         })
         .then(response => response.json())
@@ -145,28 +147,43 @@ class TrainerChat extends Component {
         activeTab: tab,
       })
     }
-  }
+  };
 
   fetchData = async (roomId) => {
-    const messageData = await db.collection(roomId).orderBy("epoch_time", "desc").get();
+    this.setState({ fetching: true });
+    const messageData = await db.collection(roomId).orderBy("epoch_time", "asc").get();
     let list = [];
     messageData.forEach(element => list.push(element.data()));
-    console.log("-------fetchData--------- ", list);
+    console.log("-------fetchData---------", list);
     this.setState(
       {
-        messages : list,
-        loading: false
+        messages: list,
+        fetching: false
       }
     )
-  }
+  };
 
   //Use For Chat Box
   userChatOpen = (id, name, status, roomId) => {
-    this.setState({ Chat_Box_Username: name, currentRoomId: roomId, groupId: id })
-    this.fetchData(roomId)
-  }
+    this.setState({ Chat_Box_Username: name, currentRoomId: roomId, groupId: id });
+    this.fetchData(roomId);
+  };
 
   addMessage = async (roomId) => {
+    if(this.state.group === ''){
+       swal("Wait!", "Please select a group to post to first", "info");
+       return;
+    }
+    if(this.state.curMessage === ''){
+       swal("Wait!", "Cannot send empty messages", "info");
+       return;
+    }
+    this.setState(
+        {
+            loading: true
+        }
+    );
+
     let now = new Date();
     const message = {
      "group_id": roomId,
@@ -177,28 +194,34 @@ class TrainerChat extends Component {
       "message_id": uuidv4(),
       "username": this.state.currentUser.name,
       "created_at": moment(now).format("YYYY-MM-DD HH:mm:ss"),
-      "epoch_time": Math.round(now.getTime() / 1000)
+      "epoch_time": now.getTime()
     };
     console.log("-------------------Cur Message---------> ", message);
     await db.collection(roomId).add(message);
     this.fetchData(roomId);
-  }
+    this.setState(
+        {
+            loading: false,
+            curMessage: ""
+        }
+    );
+  };
 
   scrollToBottom = () => {
     if (this.messageBox) {
       this.messageBox.scrollTop = this.messageBox.scrollHeight + 1000
     }
-  }
+  };
 
   onKeyPress = e => {
-    const { key, value } = e
-    const { currentRoomId, currentUser } = this.state
+    const { key, value } = e;
+    const { currentRoomId, currentUser } = this.state;
     if (key === "Enter") {
-      this.setState({ curMessage: value })
-      this.addMessage(currentRoomId)
+      this.setState({ curMessage: value });
+      this.addMessage(currentRoomId);
       e.target()
     }
-  }
+  };
 
   deleteGroup = () => {
     if(this.state.groupId === ""){
@@ -232,7 +255,7 @@ class TrainerChat extends Component {
         .then(
           response => {
           console.log("=================== > ", response.data);
-          swal("Success!", "Chat Group deleted", "success")
+          swal("Success!", "Chat Group deleted", "success");
           window.location.href = "/trainer_chat";
         }
         ).catch(
@@ -241,7 +264,7 @@ class TrainerChat extends Component {
              swal("Error!", "Chat Update error", "error");
            }
        );
-  }
+  };
 
   render() {
     const { currentRoomId, currentUser } = this.state;
@@ -395,6 +418,7 @@ class TrainerChat extends Component {
                           <Col md="4" xs="9">
                             <h5 className="font-size-15 mb-1">
                               {this.state.Chat_Box_Username}
+                              {this.state.fetching ? <Spinner animation="grow" /> : ""}
                             </h5>
 
                             <p className="text-muted mb-0">
@@ -406,67 +430,6 @@ class TrainerChat extends Component {
                           </Col>
                           <Col md="8" xs="3">
                             <ul className="list-inline user-chat-nav text-right mb-0">
-                              <li className="list-inline-item d-none d-sm-inline-block">
-                                <Dropdown
-                                  isOpen={this.state.search_Menu}
-                                  toggle={this.toggleSearch}
-                                >
-                                  <DropdownToggle
-                                    className="btn nav-btn"
-                                    tag="i"
-                                  >
-                                    <i className="bx bx-search-alt-2"></i>
-                                  </DropdownToggle>
-                                  <DropdownMenu
-                                    className="dropdown-menu-md"
-                                    right
-                                  >
-                                    <Form className="p-3">
-                                      <FormGroup className="m-0">
-                                        <InputGroup>
-                                          <Input
-                                            type="text"
-                                            className="form-control"
-                                            placeholder="Search ..."
-                                            aria-label="Recipient's username"
-                                          />
-                                          <InputGroupAddon addonType="append">
-                                            <Button
-                                              color="primary"
-                                              type="submit"
-                                            >
-                                              <i className="mdi mdi-magnify"></i>
-                                            </Button>
-                                          </InputGroupAddon>
-                                        </InputGroup>
-                                      </FormGroup>
-                                    </Form>
-                                  </DropdownMenu>
-                                </Dropdown>
-                              </li>
-                              <li className="list-inline-item  d-none d-sm-inline-block">
-                                <Dropdown
-                                  isOpen={this.state.settings_Menu}
-                                  toggle={this.toggleSettings}
-                                >
-                                  <DropdownToggle
-                                    className="btn nav-btn"
-                                    tag="i"
-                                  >
-                                    <i className="bx bx-cog"></i>
-                                  </DropdownToggle>
-                                  <DropdownMenu right>
-                                    <DropdownItem href="#">
-                                      View Profile
-                                    </DropdownItem>
-                                    <DropdownItem href="#">
-                                      Clear chat
-                                    </DropdownItem>
-                                    <DropdownItem href="#">Muted</DropdownItem>
-                                    <DropdownItem href="#">Delete</DropdownItem>
-                                  </DropdownMenu>
-                                </Dropdown>
-                              </li>
                               <li className="list-inline-item">
                                 <Dropdown
                                   isOpen={this.state.other_Menu}
@@ -510,26 +473,6 @@ class TrainerChat extends Component {
                                     }
                                   >
                                     <div className="conversation-list">
-                                      <UncontrolledDropdown>
-                                        <DropdownToggle
-                                          href="#"
-                                          className="btn nav-btn"
-                                          tag="i"
-                                        >
-                                          <i className="bx bx-dots-vertical-rounded" />
-                                        </DropdownToggle>
-                                        <DropdownMenu direction="right">
-                                          <DropdownItem href="#">
-                                            Copy
-                                          </DropdownItem>
-                                          <DropdownItem href="#">
-                                            Save
-                                          </DropdownItem>
-                                          <DropdownItem href="#">
-                                            Forward
-                                          </DropdownItem>
-                                        </DropdownMenu>
-                                      </UncontrolledDropdown>
                                       <div className="ctext-wrap">
                                         <div className="conversation-name">
                                           {message.username}
@@ -562,52 +505,6 @@ class TrainerChat extends Component {
                                   className="form-control chat-input"
                                   placeholder="Enter Message..."
                                 />
-                                <div className="chat-input-links">
-                                  <ul className="list-inline mb-0">
-                                    <li className="list-inline-item">
-                                      <Link to="#">
-                                        <i
-                                          className="mdi mdi-emoticon-happy-outline"
-                                          id="Emojitooltip"
-                                        ></i>
-                                        <UncontrolledTooltip
-                                          placement="top"
-                                          target="Emojitooltip"
-                                        >
-                                          Emojis
-                                        </UncontrolledTooltip>
-                                      </Link>
-                                    </li>
-                                    <li className="list-inline-item">
-                                      <Link to="#">
-                                        <i
-                                          className="mdi mdi-file-image-outline"
-                                          id="Imagetooltip"
-                                        ></i>
-                                        <UncontrolledTooltip
-                                          placement="top"
-                                          target="Imagetooltip"
-                                        >
-                                          Images
-                                        </UncontrolledTooltip>
-                                      </Link>
-                                    </li>
-                                    <li className="list-inline-item">
-                                      <Link to="#">
-                                        <i
-                                          className="mdi mdi-file-document-outline"
-                                          id="Filetooltip"
-                                        ></i>
-                                        <UncontrolledTooltip
-                                          placement="top"
-                                          target="Filetooltip"
-                                        >
-                                          Add Files
-                                        </UncontrolledTooltip>
-                                      </Link>
-                                    </li>
-                                  </ul>
-                                </div>
                               </div>
                             </Col>
                             <Col className="col-auto">
@@ -622,10 +519,9 @@ class TrainerChat extends Component {
                                 }
                                 className="btn-rounded chat-send w-md waves-effect waves-light"
                               >
-                                <span className="d-none d-sm-inline-block mr-2">
-                                  Send
-                                </span>{" "}
-                                <i className="mdi mdi-send"></i>
+                                 {this.state.loading ? <Spinner animation="grow" /> : <span className="d-none d-sm-inline-block mr-2">Send</span>}
+                                 {" "}
+                                 {this.state.loading ? " " : <i className="mdi mdi-send"/>}
                               </Button>
                             </Col>
                           </Row>

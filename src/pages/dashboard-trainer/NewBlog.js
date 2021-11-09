@@ -35,7 +35,7 @@ class NewBlog extends Component {
       type:"",
       category:"",
       duration:0,
-      login:false,
+      loading:false,
       checked:false,
       allBlogs: [],
       allComments: [],
@@ -43,6 +43,14 @@ class NewBlog extends Component {
   }
 
   postBlog = async () => {
+
+    if(this.state.title === "" || this.state.body === "" || this.state.image_url === "" || this.state.blog_category === ""){
+        swal("Error!", "Please fill all entries", "info");
+        return
+    }
+    this.setState({
+        loading: true
+    });
     let blogObject = {
       blog_id: uuidv4(),
       uploaded_by: localStorage.getItem("south_fitness_fullname"),
@@ -83,7 +91,7 @@ class NewBlog extends Component {
 
   imageUpload = async (files) => {
     this.setState({
-      login: true
+      loading: true
     });
 
     files.map( async (file) => {
@@ -111,7 +119,7 @@ class NewBlog extends Component {
     );
 
     this.setState({
-      login: false
+      loading: false
     });
   }
 
@@ -126,7 +134,9 @@ class NewBlog extends Component {
   }
 
   getAllBlogs = async() => {
-
+        this.setState({
+                loading: true
+            });
        fetch("https://southfitness.epitomesoftware.live/blog/trainer/" + localStorage.getItem("south_fitness_UID"), {
           method: "GET"
         })
@@ -141,7 +151,8 @@ class NewBlog extends Component {
           this.setState({
             total_count: com,
             allBlogs: response,
-            allComments: leCome
+            allComments: leCome,
+            loading: false
           })
         })
         .catch((error) => {
@@ -304,7 +315,7 @@ class NewBlog extends Component {
                           })}
                         </div>
                         <br/>
-                        {this.state.login ? <Spinner animation="grow" /> : ""}
+                        {this.state.loading ? <Spinner animation="grow" /> : ""}
                       </Form>
                        </CardBody>
                       </Card>

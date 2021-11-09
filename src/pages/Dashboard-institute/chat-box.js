@@ -15,7 +15,7 @@ import {
     FormGroup,
     Input,
     InputGroup,
-    InputGroupAddon, Label, Media, Spinner,
+    InputGroupAddon, Label, Media, Spinner, CardTitle,
 } from "reactstrap"
 import { Link } from "react-router-dom"
 
@@ -36,20 +36,26 @@ class ChatBox extends Component {
       messages: [],
       group:'',
       curMessage: "",
-      chatImageUrl: "no image"
+      chatImageUrl: "no image",
+      loading: false,
+      fetching: false,
     }
   }
 
 
   fetchData = async (roomId) => {
+    this.setState(
+      {
+        fetching: true
+      }
+    );
     const messageData = await db.collection(roomId).orderBy("epoch_time", "desc").get();
     let list = [];
     messageData.forEach(element => list.push(element.data()));
-    console.log("-------fetchData--------- ", list);
     this.setState(
       {
         messages : list,
-        loading: false
+        fetching: false
       }
     )
   }
@@ -64,6 +70,7 @@ class ChatBox extends Component {
   }
 
   addMessage = async () => {
+
     if(this.state.group === ''){
        swal("Wait!", "Please select a group to post to first", "info");
        return;
@@ -72,6 +79,11 @@ class ChatBox extends Component {
        swal("Wait!", "Cannot send empty messages", "info");
        return;
     }
+    this.setState(
+        {
+            loading: true
+        }
+    )
     let now = new Date();
     const message = {
      "group_id": this.state.group,
@@ -82,14 +94,15 @@ class ChatBox extends Component {
       "message_id": uuidv4(),
       "username": localStorage.getItem("south_fitness_fullname"),
       "created_at": moment(now).format("YYYY-MM-DD HH:mm:ss"),
-      "epoch_time": Math.round(now.getTime() / 1000)
+      "epoch_time": now.getTime(),
     };
     console.log("-------------------Cur Message---------> ", message);
     await db.collection(this.state.group).add(message);
     this.fetchData(this.state.group);
     this.setState(
         {
-            curMessage: ""
+            curMessage: "",
+            loading: false
         }
     )
   };
@@ -201,7 +214,7 @@ class ChatBox extends Component {
                 <div className="chat-conversation">
                   <SimpleBar style={{ maxHeight: "300px" }}>
                     <ul className="list-unstyled">
-                      {this.state.messages.reverse().map(message => (
+                      {this.state.fetching ? <Spinner animation="grow" /> : this.state.messages.reverse().map(message => (
                        <li
                           key={"test_k" + message.message_id}
                           className={
@@ -211,26 +224,6 @@ class ChatBox extends Component {
                           }
                         >
                           <div className="conversation-list">
-                            <UncontrolledDropdown>
-                              <DropdownToggle
-                                href="#"
-                                className="btn nav-btn"
-                                tag="i"
-                              >
-                                <i className="bx bx-dots-vertical-rounded" />
-                              </DropdownToggle>
-                              <DropdownMenu direction="right">
-                                <DropdownItem href="#">
-                                  Copy
-                                </DropdownItem>
-                                <DropdownItem href="#">
-                                  Save
-                                </DropdownItem>
-                                <DropdownItem href="#">
-                                  Forward
-                                </DropdownItem>
-                              </DropdownMenu>
-                            </UncontrolledDropdown>
                             <div className="ctext-wrap">
                               <div className="conversation-name">
                                 {message.username}
@@ -266,62 +259,18 @@ class ChatBox extends Component {
                       className="form-control rounded chat-input"
                       placeholder="Enter Message..."
                     />
-                    {/*<div className="chat-input-links">*/}
-                      {/*<ul className="list-inline mb-0">*/}
-                        {/*<li className="list-inline-item">*/}
-                          {/*<Link to="#">*/}
-                            {/*<i*/}
-                              {/*className="mdi mdi-emoticon-happy-outline"*/}
-                              {/*id="Emojitooltip"*/}
-                              {/*/>*/}
-                            {/*<UncontrolledTooltip*/}
-                              {/*placement="top"*/}
-                              {/*target="Emojitooltip"*/}
-                            {/*>*/}
-                              {/*Emojis*/}
-                            {/*</UncontrolledTooltip>*/}
-                          {/*</Link>*/}
-                        {/*</li>*/}
-                        {/*<li className="list-inline-item">*/}
-                          {/*<Link to="#">*/}
-                            {/*<i*/}
-  {/*className="mdi mdi-file-image-outline"*/}
-  {/*id="Imagetooltip"*/}
-  {/*/>*/}
-                            {/*<UncontrolledTooltip*/}
-                              {/*placement="top"*/}
-                              {/*target="Imagetooltip"*/}
-                            {/*>*/}
-                              {/*Images*/}
-                            {/*</UncontrolledTooltip>*/}
-                          {/*</Link>*/}
-                        {/*</li>*/}
-                        {/*<li className="list-inline-item">*/}
-                          {/*<Link to="#">*/}
-                            {/*<i*/}
-  {/*className="mdi mdi-file-document-outline"*/}
-  {/*id="Filetooltip"*/}
-  {/*/>*/}
-                            {/*<UncontrolledTooltip*/}
-                              {/*placement="top"*/}
-                              {/*target="Filetooltip"*/}
-                            {/*>*/}
-                              {/*Add Files*/}
-                            {/*</UncontrolledTooltip>*/}
-                          {/*</Link>*/}
-                        {/*</li>*/}
-                      {/*</ul>*/}
-                    {/*</div>*/}
                   </div>
                 </Col>
                 <div className="col-auto">
                   <Button
                     type="submit"
                     color="primary"
+                    disabled={this.state.loading}
                     className="chat-send w-md waves-effect waves-light"
                     onClick={() => this.addMessage()}>
-                    <span className="d-none d-sm-inline-block mr-2">Send</span>{" "}
-                    <i className="mdi mdi-send"/>
+                    {this.state.loading ? <Spinner animation="grow" /> : <span className="d-none d-sm-inline-block mr-2">Send</span>}
+                    {" "}
+                    {this.state.loading ? " " : <i className="mdi mdi-send"/>}
                   </Button>
                 </div>
               </Row>

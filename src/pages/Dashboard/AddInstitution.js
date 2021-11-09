@@ -49,6 +49,9 @@ class AddInstitution extends Component {
       login:false,
       posting:false,
       loading:false,
+      loading1:false,
+      loading2:false,
+      loading3:false,
     }
   }
 
@@ -141,25 +144,21 @@ class AddInstitution extends Component {
 
             switch (status) {
                 case "logo":
-                    this.setState({ selectedImageFiles: files, instituteImageUrl: response.data.secure_url})
+                    this.setState({ selectedImageFiles: files, instituteImageUrl: response.data.secure_url, loading: false})
                     break;
                 case "image1":
-                    this.setState({ selectedImageFiles1: files, institute_url1: response.data.secure_url})
+                    this.setState({ selectedImageFiles1: files, institute_url1: response.data.secure_url, loading1: false})
                     break;
                 case "image2":
-                    this.setState({ selectedImageFiles2: files, institute_url2: response.data.secure_url})
+                    this.setState({ selectedImageFiles2: files, institute_url2: response.data.secure_url, loading2: false})
                     break;
                 case "image3":
-                    this.setState({ selectedImageFiles3: files, institute_url3: response.data.secure_url})
+                    this.setState({ selectedImageFiles3: files, institute_url3: response.data.secure_url, loading3: false})
                     break;
             }
           });
         }
     );
-
-    this.setState({
-      loading: false
-    });
   }
 
   formatBytes = (bytes, decimals = 2) => {
@@ -298,8 +297,7 @@ class AddInstitution extends Component {
                     <Col sm="6">
                      <Card>
                       <CardBody>
-                        <CardTitle className="mb-3">Institution Logo (w:600px h:460px)</CardTitle>
-                        {this.state.loading ? <Spinner animation="grow" /> : ""}
+                        <CardTitle className="mb-3">Institution Logo (w:600px h:460px) {this.state.loading ? <Spinner animation="grow" /> : ""} </CardTitle>
                         <Form>
                         <Dropzone
                           accept={'image/*'}
@@ -393,14 +391,13 @@ class AddInstitution extends Component {
                       </FormGroup>
                       <Card>
                       <CardBody>
-                        <CardTitle className="mb-3">Entry Image 1</CardTitle>
-                        {this.state.loading ? <Spinner animation="grow" /> : ""}
+                        <CardTitle className="mb-3">Entry Image 1 {this.state.loading1 ? <Spinner animation="grow" /> : ""} </CardTitle>
                         <Form>
                         <Dropzone
                           accept={"image/*"}
                           onDrop={acceptedFiles => {
                               this.setState({
-                                  loading: true
+                                  loading1: true
                                 });
                                this.imageUpload(acceptedFiles, "image1")
                             }
@@ -485,14 +482,13 @@ class AddInstitution extends Component {
                       </FormGroup>
                       <Card>
                       <CardBody>
-                        <CardTitle className="mb-3">Entry Image 2</CardTitle>
-                        {this.state.loading ? <Spinner animation="grow" /> : ""}
+                        <CardTitle className="mb-3">Entry Image 2 {this.state.loading2 ? <Spinner animation="grow" /> : ""} </CardTitle>
                         <Form>
                         <Dropzone
                           accept={"image/*"}
                           onDrop={acceptedFiles => {
                               this.setState({
-                                  loading: true
+                                  loading2: true
                                 });
                                this.imageUpload(acceptedFiles, "image2")
                             }
@@ -579,14 +575,13 @@ class AddInstitution extends Component {
                       </FormGroup>
                       <Card>
                       <CardBody>
-                        <CardTitle className="mb-3">Entry Image 3</CardTitle>
-                        {this.state.loading ? <Spinner animation="grow" /> : ""}
+                        <CardTitle className="mb-3">Entry Image 3 {this.state.loading3 ? <Spinner animation="grow" /> : ""}</CardTitle>
                         <Form>
                         <Dropzone
                           accept={"image/*"}
                           onDrop={acceptedFiles => {
                               this.setState({
-                                  loading: true
+                                  loading3: true
                                 });
                                this.imageUpload(acceptedFiles, "image3")
                             }

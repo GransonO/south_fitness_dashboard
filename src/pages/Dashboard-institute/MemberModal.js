@@ -87,8 +87,9 @@ class MemberModal extends Component {
                     user_type: e.target.value
                   })}>
                       <option value="">Select Type</option>
-                      <option value="ADMIN">Admin</option>
-                      <option value="USER">Member</option>
+                      {this.props.level !== "main" ? <option value="ADMIN">Admin</option> : ""}
+                      {this.props.level !== "main" ? <option value="USER">Member</option> : ""}
+                      {this.props.level === "main" ? <option value="TRAINER">Trainer</option> : ""}
                     </select>
                 </FormGroup>
               </Col>

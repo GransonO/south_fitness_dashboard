@@ -75,6 +75,7 @@ class Institute extends Component {
         })
         .then(response => response.json())
         .then(response => {
+            console.log("This -------------------------->", response);
           this.setState({
             allMembers: response
           });
@@ -190,7 +191,7 @@ class Institute extends Component {
 
             <Row>
               <Col xl="12">
-                <MembersList members={this.state.allMembers}/>
+                <MembersList members={this.state.allMembers}  level={"standard"}/>
               </Col>
             </Row>
           </Container>

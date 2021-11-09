@@ -36,6 +36,7 @@ import Breadcrumbs from "../../components/Common/Breadcrumb"
 
 //i18n
 import { withTranslation } from "react-i18next"
+import MembersList from "../Dashboard-institute/membersList";
 
 class Dashboard extends Component {
   constructor(props) {
@@ -63,6 +64,28 @@ class Dashboard extends Component {
     }
     this.togglemodal.bind(this)
   }
+
+  componentDidMount = async () =>  {
+    this.getInstitutionMembers();
+  }
+
+  getInstitutionMembers = async () => {
+    fetch("https://southfitness.epitomesoftware.live/profiles/institution/" + localStorage.getItem("south_fitness_institution_id"), {
+          method: "GET"
+        })
+        .then(response => response.json())
+        .then(response => {
+          this.setState({
+            allMembers: response.map(e => e.user_type === "TRAINER")
+          });
+          return response.length;
+        })
+        .catch((error) => {
+          // Code for handling the error
+          return 0;
+        });
+
+  };
 
   togglemodal = () => {
     this.setState(prevState => ({
@@ -154,6 +177,12 @@ class Dashboard extends Component {
 
               <Col xl="4">
                 <TopTrainers />
+              </Col>
+            </Row>
+
+            <Row>
+              <Col xl="12">
+                <MembersList members={this.state.allMembers} level={"main"}/>
               </Col>
             </Row>
 

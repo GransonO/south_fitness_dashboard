@@ -111,13 +111,14 @@ class MembersList extends Component {
           isOpen={this.state.modal}
           toggle={this.toggleModal}
           register={this.registerUser}
+          level = {this.props.level}
         />
         <Card>
           <CardBody>
             <CardTitle className="mb-4">
               <Row>
                 <Col sm="8">
-                  Institution Members
+                  {this.props.level === "main" ? "All Trainers" : "Institution Members"}
                 </Col>
                 <Col sm="4">
                   <div className="float-right">
@@ -128,7 +129,7 @@ class MembersList extends Component {
                       className="chat-send w-md waves-effect waves-light"
                       onClick={this.toggleModal}
                     >
-                        Add Member
+                        {this.props.level === "main" ? "Add Trainers" : "Add Member"}
                     </Button>
                   </div>
               </Col>

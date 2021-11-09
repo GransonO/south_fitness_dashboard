@@ -37,6 +37,7 @@ import Breadcrumbs from "../../components/Common/Breadcrumb"
 //i18n
 import { withTranslation } from "react-i18next"
 import Comments from "./Comments";
+import MembersList from "../Dashboard-institute/membersList";
 
 class Dashboard extends Component {
   constructor(props) {
@@ -44,7 +45,8 @@ class Dashboard extends Component {
     this.state = {
       reports: [],
       modal: false,
-      totalMembers: []
+      totalMembers: [],
+      totalTrainers: [],
     }
     this.togglemodal.bind(this)
   }
@@ -64,6 +66,7 @@ class Dashboard extends Component {
         .then(response => {
           this.setState({
             totalMembers: response,
+            totalTrainers: response.filter((item) => item.user_type === "TRAINER"),
             reports: [
                 ...this.state.reports,
                { title: "Trainers", iconClass: "bx-copy-alt", description: response.filter((item) => item.user_type === "TRAINER").length },
@@ -81,8 +84,7 @@ class Dashboard extends Component {
         });
   };
 
-
-   getInstitutions = async() => {
+  getInstitutions = async() => {
        fetch("https://southfitness.epitomesoftware.live/institution/all/", {
           method: "GET"
         })
@@ -182,6 +184,13 @@ class Dashboard extends Component {
             <Row>
               <Col lg="12">
                 <InstitutionList totalMembers={this.state.totalMembers}/>
+              </Col>
+            </Row>
+
+
+            <Row>
+              <Col xl="12">
+                <MembersList members={this.state.totalTrainers} level={"main"}/>
               </Col>
             </Row>
           </Container>
